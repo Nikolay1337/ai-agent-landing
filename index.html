@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ИИ-агент, который каждое утро присылает сводку по вашему бизнесу в Telegram</title>
+<meta name="description" content="ИИ-агент сам собирает данные из кабинетов маркетплейсов, кассы или соцсетей и присылает главное по бизнесу в Telegram. Для селлеров, сетей шаурмы и блогеров.">
+<meta property="og:title" content="Сводка по вашему бизнесу каждое утро — в Telegram">
+<meta property="og:description" content="Одно сообщение вместо таблиц и отчётов: прибыль, проблемы и что сделать сегодня.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#25292a">
+<!-- Сюда вставьте счётчик Яндекс Метрики, чтобы мерить спрос: клики по кнопкам и отправки формы -->
+<style>
+  :root{
+    --bg:#25292a; --bg2:#2b3031; --card:#323839; --card2:#3a4142;
+    --line:#434b4c; --line2:#525b5c;
+    --text:#eef1f0; --muted:#bcc5c2; --dim:#98a39f;
+    --accent:#6cc79a; --accent2:#9adbb8; --accent-ink:#0f2219;
+    --glow:rgba(108,199,154,.32);
+    --radius:16px;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.55;font-size:17px;overflow-x:hidden}
+  a{color:var(--accent2)}
+  ::selection{background:var(--accent);color:var(--accent-ink)}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px;position:relative}
+
+  /* Мягкий фон */
+  .bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+  .orb{position:absolute;width:560px;height:560px;border-radius:50%;filter:blur(110px);opacity:.16;background:var(--accent);animation:float 20s var(--ease) infinite alternate}
+  .orb.o1{top:-200px;left:-160px}
+  .orb.o2{top:45%;right:-240px;background:#8fa8a0;opacity:.14;animation-duration:26s}
+  @keyframes float{to{transform:translate(110px,70px) scale(1.12)}}
+
+  /* Шапка */
+  header{position:sticky;top:0;z-index:20;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:rgba(37,41,42,.8);border-bottom:1px solid var(--line)}
+  .bar{display:flex;align-items:center;justify-content:space-between;height:66px;gap:16px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none;color:var(--text)}
+  .logo-mark{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink)}
+  .logo-mark svg{width:18px;height:18px}
+  nav.links{display:flex;gap:6px}
+  nav.links a{color:var(--muted);text-decoration:none;font-size:15px;padding:8px 12px;border-radius:8px;position:relative;transition:color .25s}
+  nav.links a::after{content:"";position:absolute;left:12px;right:12px;bottom:4px;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+  nav.links a:hover{color:var(--text)}
+  nav.links a:hover::after{transform:scaleX(1)}
+
+  /* Кнопки */
+  .btn{--b:var(--accent);position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 26px;border-radius:12px;border:1px solid var(--b);background:var(--b);color:var(--accent-ink);font:inherit;font-weight:650;text-decoration:none;cursor:pointer;
+    transition:transform .35s var(--ease),box-shadow .35s var(--ease),background .3s,color .3s,border-color .3s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -10px var(--glow),0 0 0 4px rgba(108,199,154,.14)}
+  .btn:active{transform:translateY(0) scale(.98)}
+  .btn .arr{display:inline-block;transition:transform .35s var(--ease)}
+  .btn:hover .arr{transform:translateX(4px)}
+  .btn::before{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);transition:left .7s var(--ease)}
+  .btn:hover::before{left:130%}
+  .btn.ghost{background:transparent;color:var(--text);border-color:var(--line2)}
+  .btn.ghost:hover{border-color:var(--accent);color:var(--accent2);box-shadow:0 0 0 4px rgba(108,199,154,.1)}
+  .btn.ghost::before{background:linear-gradient(100deg,transparent,rgba(108,199,154,.2),transparent)}
+  .ripple{position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,.45);animation:rip .6s var(--ease) forwards;pointer-events:none}
+  .btn.ghost .ripple{background:rgba(108,199,154,.35)}
+  @keyframes rip{to{transform:scale(4);opacity:0}}
+  .btn:focus-visible,.tab:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,nav.links a:focus-visible,.logo:focus-visible{outline:2px solid var(--accent2);outline-offset:3px}
+
+  /* Первый экран */
+  .hero{padding:72px 0 56px;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--accent2);border:1px solid var(--line2);background:rgba(108,199,154,.08);padding:6px 14px;border-radius:999px;margin-bottom:22px}
+  h1{font-size:clamp(34px,5vw,56px);line-height:1.07;letter-spacing:-.03em;margin:0 0 20px}
+  h1 .hl{color:var(--accent)}
+  .lead{font-size:clamp(18px,2vw,20px);color:var(--muted);max-width:580px;margin:0 0 30px}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+  .namer{margin-top:28px;max-width:420px;display:grid;gap:8px}
+  .namer label{font-size:15px;font-weight:600;color:var(--muted)}
+  .namer input{min-height:46px}
+
+  /* Телефон с уведомлениями */
+  .phone-col{display:flex;flex-direction:column;align-items:center;gap:16px}
+  .phone{width:300px;height:560px;border-radius:44px;padding:12px;background:#151819;box-shadow:0 40px 80px -30px rgba(0,0,0,.6),0 0 0 2px #4a5253 inset;position:relative}
+  .screen{width:100%;height:100%;border-radius:34px;overflow:hidden;position:relative;
+    background:radial-gradient(120% 80% at 20% 0%,#5d7a6e 0%,#3d4a47 45%,#2a3132 100%)}
+  .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:90px;height:24px;border-radius:14px;background:#151819;z-index:2}
+  .clock{text-align:center;color:#fff;padding-top:54px}
+  .clock .t{font-size:62px;font-weight:300;letter-spacing:-.02em;line-height:1}
+  .clock .d{font-size:14px;opacity:.85;margin-top:6px}
+  .notifs{position:absolute;left:10px;right:10px;top:170px;display:flex;flex-direction:column;gap:8px}
+  .notif{display:flex;gap:10px;padding:11px 12px;border-radius:18px;background:rgba(240,244,242,.88);color:#1d2322;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    transform:translateY(-14px) scale(.96);opacity:0;transition:transform .6s var(--ease),opacity .6s var(--ease)}
+  .notif.show{transform:none;opacity:1}
+  .notif .ic{width:34px;height:34px;border-radius:9px;background:var(--accent);flex:none;display:grid;place-items:center;color:var(--accent-ink)}
+  .notif .ic svg{width:18px;height:18px}
+  .notif .top{display:flex;justify-content:space-between;font-size:12.5px;color:#55605d}
+  .notif .top b{color:#1d2322;font-weight:650}
+  .notif p{margin:2px 0 0;font-size:13.5px;line-height:1.35}
+  .notif.alert .ic{background:#e9a94e}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  .chip{min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);background:var(--card);color:var(--muted);font:inherit;font-size:14px;cursor:pointer;transition:background .3s,color .3s,border-color .3s}
+  .chip:hover{color:var(--text);border-color:var(--accent)}
+  .chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+  section{padding:72px 0}
+  section.alt{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  h2{font-size:clamp(28px,3.6vw,40px);letter-spacing:-.025em;line-height:1.12;margin:0 0 12px}
+  .sub{color:var(--muted);max-width:640px;margin:0 0 32px}
+
+  /* Было / стало */
+  .ba{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:stretch}
+  .ba-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+  .ba-card h3{margin:0 0 14px;font-size:20px}
+  .ba-card ul{margin:0;padding:0;list-style:none;display:grid;gap:10px;color:var(--muted)}
+  .ba-card li{display:flex;gap:10px}
+  .ba-card li::before{content:"–";color:var(--dim)}
+  .ba-card.after{border-color:var(--accent);box-shadow:0 20px 50px -30px var(--glow)}
+  .ba-card.after li::before{content:"✓";color:var(--accent)}
+  .ba-arrow{display:grid;place-items:center;color:var(--accent);font-size:32px}
+
+  /* Вкладки */
+  .tabs{position:relative;display:inline-flex;flex-wrap:wrap;gap:4px;padding:5px;border:1px solid var(--line2);border-radius:14px;background:var(--card);margin-bottom:28px}
+  .tab{position:relative;z-index:1;min-height:44px;padding:0 18px;border:0;border-radius:10px;background:transparent;font:inherit;font-weight:600;font-size:15.5px;color:var(--muted);cursor:pointer;transition:color .3s;display:inline-flex;align-items:center;gap:8px}
+  .tab svg{width:18px;height:18px;flex:none}
+  .tab:hover{color:var(--text)}
+  .tab[aria-selected="true"]{color:var(--accent-ink)}
+  .tab-ind{position:absolute;z-index:0;top:5px;left:5px;height:44px;border-radius:10px;background:var(--accent);box-shadow:0 6px 20px -6px var(--glow);transition:transform .45s var(--ease),width .45s var(--ease),height .45s var(--ease)}
+  .panel[hidden]{display:none}
+  .panel{animation:panelIn .5s var(--ease)}
+  @keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  .split{display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:start}
+  .cards{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+  .card{position:relative;padding:16px 18px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:transform .35s var(--ease),border-color .3s}
+  .card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(108,199,154,.14),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
+  .card:hover{transform:translateX(4px);border-color:var(--line2)}
+  .card:hover::before{opacity:1}
+  .card strong{display:block;position:relative}
+  .card span{color:var(--muted);font-size:15px;position:relative}
+
+  .chat{background:var(--card);border:1px solid var(--line2);border-radius:var(--radius);padding:16px}
+  .chat-head{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);margin:0 0 12px}
+  .ava{width:36px;height:36px;border-radius:50%;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink);flex:none}
+  .ava svg{width:18px;height:18px}
+  .chat-head b{color:var(--text);font-weight:600;display:block}
+  .bubble{background:var(--card2);border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:14px 16px;font-size:15.5px;white-space:pre-line;line-height:1.6;min-height:190px}
+  .bubble .typing{display:inline-flex;gap:4px}
+  .bubble .typing i{width:7px;height:7px;border-radius:50%;background:var(--dim);animation:dot 1.2s infinite}
+  .bubble .typing i:nth-child(2){animation-delay:.15s}.bubble .typing i:nth-child(3){animation-delay:.3s}
+  @keyframes dot{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+  .note{font-size:14px;color:var(--dim);margin:10px 0 0}
+  .replay{background:none;border:0;color:var(--accent2);font:inherit;font-size:14px;cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:s;list-style:none;padding:0;margin:0}
+  .steps li{counter-increment:s;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;transition:transform .4s var(--ease),border-color .3s,box-shadow .4s var(--ease)}
+  .steps li:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 18px 40px -22px var(--glow)}
+  .steps li::before{content:counter(s);display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:700;margin-bottom:12px}
+  .steps strong{display:block;margin-bottom:6px;font-size:18px}
+  .steps span{color:var(--muted);font-size:15px}
+
+  .form-wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  form{display:grid;gap:16px;background:var(--card);border:1px solid var(--line2);border-radius:20px;padding:24px}
+  label{font-weight:600;font-size:15px;display:grid;gap:7px}
+  input,select{font:inherit;min-height:48px;padding:0 14px;border:1px solid var(--line2);border-radius:10px;background:var(--bg2);color:var(--text);transition:border-color .25s,box-shadow .25s}
+  input::placeholder{color:var(--dim)}
+  input:hover,select:hover{border-color:#6a7576}
+  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(108,199,154,.18);outline:none}
+  .hint{font-size:14px;color:var(--dim);margin:0}
+  .perks{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+  .perks li{display:flex;gap:12px;align-items:flex-start;color:var(--muted)}
+  .perks svg{flex:none;width:22px;height:22px;color:var(--accent);margin-top:2px}
+
+  footer{border-top:1px solid var(--line);padding:30px 0;color:var(--dim);font-size:14.5px}
+  footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media (max-width:880px){
+    .hero,.split,.form-wrap{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr}
+    .ba{grid-template-columns:1fr}
+    .ba-arrow{transform:rotate(90deg)}
+    nav.links{display:none}
+    .hero{padding:48px 0 40px}
+    .tabs{display:flex}
+    .tab{flex:1 1 auto;justify-content:center}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    .reveal{opacity:1;transform:none}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="orb o1"></div><div class="orb o2"></div></div>
+
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span>ИИ-агент для бизнеса</a>
+    <nav class="links" aria-label="Разделы">
+      <a href="#what">Что в сводке</a>
+      <a href="#how">Как работает</a>
+      <a href="#request">Пилот</a>
+    </nav>
+    <a class="btn ghost" href="#request">Оставить заявку</a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <div class="reveal">
+      <span class="eyebrow">Для владельцев и руководителей бизнеса</span>
+      <h1>Просыпаетесь — а главное о бизнесе <span class="hl">уже в телефоне</span></h1>
+      <p class="lead">Каждое утро ИИ-агент присылает в Telegram одно понятное сообщение: сколько заработали, что пошло не так и что стоит сделать сегодня. Не нужно открывать таблицы и ждать отчётов.</p>
+      <div class="cta-row">
+        <a class="btn" href="#request">Хочу так же <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn ghost" href="#what">Что в сводке</a>
+      </div>
+      <div class="namer">
+        <label for="botname">Как назовёте своего помощника? Попробуйте</label>
+        <input id="botname" type="text" maxlength="24" placeholder="Например, Аналитик Петрович" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="phone-col reveal">
+      <div class="phone" role="img" aria-label="Телефон, на который утром приходят уведомления от ИИ-агента">
+        <div class="screen">
+          <div class="notch" aria-hidden="true"></div>
+          <div class="clock" aria-hidden="true"><div class="t">07:30</div><div class="d">Доброе утро</div></div>
+          <div class="notifs" id="notifs" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div class="chips" role="group" aria-label="Пример для бизнеса">
+        <button class="chip" type="button" data-seg="0" aria-pressed="true">Селлер</button>
+        <button class="chip" type="button" data-seg="1" aria-pressed="false">Сеть шаурмы</button>
+        <button class="chip" type="button" data-seg="2" aria-pressed="false">Блогер</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="alt">
+    <div class="wrap">
+      <h2 class="reveal">Вместо часа в таблицах — минута с утренним кофе</h2>
+      <p class="sub reveal">Агент делает рутинную работу, которую сейчас делаете вы или ваш менеджер.</p>
+      <div class="ba">
+        <div class="ba-card reveal">
+          <h3>Как обычно</h3>
+          <ul>
+            <li>Открываете кабинеты, кассу или статистику по отдельности</li>
+            <li>Сводите цифры в таблицу или ждёте отчёт от менеджера</li>
+            <li>Про проблему узнаёте, когда она уже стоила денег</li>
+          </ul>
+        </div>
+        <div class="ba-arrow reveal" aria-hidden="true">→</div>
+        <div class="ba-card after reveal">
+          <h3>С агентом</h3>
+          <ul>
+            <li>Одно сообщение в Telegram в удобное вам время</li>
+            <li>Только важные цифры, простыми словами</li>
+            <li>Предупреждение сразу, как только что-то пошло не так</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="what">
+    <div class="wrap">
+      <h2 class="reveal">Что вы увидите в сводке</h2>
+      <p class="sub reveal">Выберите тип бизнеса. Набор показателей и пороги тревог настраиваются под вас.</p>
+
+      <div class="tabs reveal" role="tablist" aria-label="Тип бизнеса">
+        <span class="tab-ind" aria-hidden="true"></span>
+        <button class="tab" role="tab" id="tab-sellers" aria-controls="panel-sellers" aria-selected="true" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18l-2 12H5L3 7z"/><path d="M8 7a4 4 0 0 1 8 0"/></svg>Селлер маркетплейсов</button>
+        <button class="tab" role="tab" id="tab-food" aria-controls="panel-food" aria-selected="false" type="button" tabindex="-1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16"/><path d="M6 11c0-4 2.7-7 6-7s6 3 6 7"/><path d="M5 15h14l-1 5H6l-1-5z"/></svg>Сеть шаурмы</button>
+        <button class="tab" role="tab" id="tab-blog" aria-controls="panel-blog" aria-selected="false" type="button" tabindex="-1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg>Блогер</button>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-sellers" aria-labelledby="tab-sellers">
+        <div class="split">
+          <ul class="cards">
+            <li class="card"><strong>Чистая прибыль, а не выручка</strong><span>После себестоимости, комиссий, логистики, хранения, рекламы и налогов.</span></li>
+            <li class="card"><strong>Расходы на рекламу и возвраты</strong><span>Видно, где реклама и возвраты съедают маржу.</span></li>
+            <li class="card"><strong>Остатки товара</strong><span>Предупреждение, когда товар заканчивается или залёживается.</span></li>
+            <li class="card"><strong>Прибыльные и убыточные товары</strong><span>Какие позиции приносят деньги, а какие тянут вниз.</span></li>
+            <li class="card"><strong>Сколько придёт на счёт</strong><span>Выплата от площадки с учётом удержаний и штрафов.</span></li>
+          </ul>
+          <div>
+            <div class="chat">
+              <div class="chat-head"><span class="ava" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><span><b class="bot-name">Ваш ИИ-агент</b>сводка за вчера · WB + Ozon</span></div>
+              <div class="bubble" data-text="Чистая прибыль: 41 200 ₽
+Реклама: 11,4% от выручки — выше вашего лимита 8%
+Товар A-102: остатка на 6 дней продаж, пора делать поставку
+Выкуп за 30 дней: 58%
+К выплате: 312 400 ₽"></div>
+            </div>
+            <p class="note">Пример формата, цифры условные. <button class="replay" type="button">Показать ещё раз</button></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-food" aria-labelledby="tab-food" hidden>
+        <div class="split">
+          <ul class="cards">
+            <li class="card"><strong>Выручка и средний чек по каждой точке</strong><span>Точки сравниваются между собой, а не только с прошлым месяцем.</span></li>
+            <li class="card"><strong>Расход продуктов и списания</strong><span>Сигнал, если точка тратит продуктов заметно больше остальных.</span></li>
+            <li class="card"><strong>Скидки и возвраты</strong><span>Где прибыль утекает через скидки и ошибки на кассе.</span></li>
+            <li class="card"><strong>Открытие смен</strong><span>Сотрудник присылает фото в Telegram, агент проверяет и сообщает, если отчёта нет вовремя.</span></li>
+          </ul>
+          <div>
+            <div class="chat">
+              <div class="chat-head"><span class="ava" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><span><b class="bot-name">Ваш ИИ-агент</b>сводка за вчера · 7 точек</span></div>
+              <div class="bubble" data-text="Выручка сети: 486 000 ₽
+Средний чек: 410 ₽
+Продукты: точка №3 тратит 38% выручки, остальные около 32%
+Списания: на точке №5 в 2 раза больше среднего
+Скидки: на точке №2 скидка в 14% чеков
+Смена: точка №4 не прислала фото открытия"></div>
+            </div>
+            <p class="note">Пример формата, цифры условные. <button class="replay" type="button">Показать ещё раз</button></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-blog" aria-labelledby="tab-blog" hidden>
+        <div class="split">
+          <ul class="cards">
+            <li class="card"><strong>Охваты и вовлечённость</strong><span>Сколько людей увидели каждый пост и как реагировали — с объяснением, почему выросло или упало.</span></li>
+            <li class="card"><strong>Рост и отток подписчиков</strong><span>Сколько пришло и ушло, после каких публикаций.</span></li>
+            <li class="card"><strong>Что и когда публиковать</strong><span>Какие темы, форматы и часы работают именно у вас.</span></li>
+            <li class="card"><strong>Тренды в вашей нише</strong><span>Что набирает просмотры у похожих авторов.</span></li>
+            <li class="card"><strong>Идеи следующих постов</strong><span>Агент предлагает темы на основе того, что сработало.</span></li>
+          </ul>
+          <div>
+            <div class="chat">
+              <div class="chat-head"><span class="ava" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><span><b class="bot-name">Ваш ИИ-агент</b>сводка за неделю · Instagram + Telegram</span></div>
+              <div class="bubble" data-text="Охват за неделю: 84 300 (+12%)
+Вовлечённость: 4,1% — лучшая за месяц
+Лучший пост: Reels про нейросети для резюме — 31 000 просмотров
+Подписчики: +412 / −96
+Лучшее время публикации: 19:00–21:00
+Идея: продолжить тему резюме в формате «до/после»"></div>
+            </div>
+            <p class="note">Пример формата, цифры условные. <button class="replay" type="button">Показать ещё раз</button></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="alt">
+    <div class="wrap">
+      <h2 class="reveal">Как это работает</h2>
+      <p class="sub reveal">Первая сводка — после короткого созвона и подключения данных.</p>
+      <ol class="steps">
+        <li class="reveal"><strong>Подключаем данные</strong><span>Кабинеты WB, Ozon, Яндекс Маркета, кассу или аккаунты в соцсетях. Технические детали берём на себя.</span></li>
+        <li class="reveal"><strong>Настраиваем под вас</strong><span>Какие цифры важны, во сколько присылать сводку, когда бить тревогу. Имя бота — любое, на ваш выбор.</span></li>
+        <li class="reveal"><strong>Получаете сводку</strong><span>Каждое утро и сразу, если что-то пошло не так.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="request">
+    <div class="wrap form-wrap">
+      <div class="reveal">
+        <h2>Набираем первых пользователей</h2>
+        <p class="sub">Расскажите о бизнесе в двух строках — продолжим в Telegram.</p>
+        <ul class="perks">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Настроим показатели и время сводки под ваш бизнес</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Бот называется так, как захотите вы</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Пишете напрямую основателю</li>
+        </ul>
+      </div>
+      <form id="lead" class="reveal" novalidate>
+        <label for="seg">Тип бизнеса
+          <select id="seg" name="seg">
+            <option value="Селлер на маркетплейсах">Селлер на маркетплейсах</option>
+            <option value="Сеть шаурмы / фастфуда">Сеть шаурмы / фастфуда</option>
+            <option value="Блогер">Блогер</option>
+            <option value="Другое">Другое</option>
+          </select>
+        </label>
+        <label for="sys"><span id="sys-label">Где ведёте учёт</span>
+          <input id="sys" name="sys" type="text" placeholder="WB, Ozon, Яндекс Маркет" autocomplete="off">
+        </label>
+        <label for="cnt"><span id="cnt-label">Сколько кабинетов</span>
+          <input id="cnt" name="cnt" type="text" placeholder="Например, 2 кабинета" autocomplete="off">
+        </label>
+        <button class="btn" type="submit">Написать в Telegram <span class="arr" aria-hidden="true">→</span></button>
+        <p class="hint">Откроется Telegram с готовым сообщением. Сайт не хранит введённые данные.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>ИИ-агент для бизнеса · пилотный проект</span>
+    <a href="https://t.me/ngafitulin" target="_blank" rel="noopener">Telegram: @ngafitulin</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var TG_USERNAME = "ngafitulin";
+  var DEFAULT_NAME = "Ваш ИИ-агент";
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var botName = DEFAULT_NAME;
+
+  /* Волна по клику на кнопки */
+  document.querySelectorAll('.btn').forEach(function(b){
+    b.addEventListener('pointerdown', function(e){
+      if(reduce) return;
+      var r = b.getBoundingClientRect(), s = Math.max(r.width, r.height);
+      var sp = document.createElement('span');
+      sp.className = 'ripple';
+      sp.style.width = sp.style.height = s + 'px';
+      sp.style.left = (e.clientX - r.left - s/2) + 'px';
+      sp.style.top = (e.clientY - r.top - s/2) + 'px';
+      b.appendChild(sp);
+      setTimeout(function(){ sp.remove(); }, 650);
+    });
+  });
+
+  /* Подсветка карточек за курсором */
+  document.querySelectorAll('.card').forEach(function(c){
+    c.addEventListener('pointermove', function(e){
+      var r = c.getBoundingClientRect();
+      c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+
+  /* Появление при прокрутке */
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){
+    es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, {threshold:.12}) : null;
+  document.querySelectorAll('.reveal').forEach(function(el){
+    var sibs = [].slice.call(el.parentElement.children).filter(function(x){ return x.classList.contains('reveal'); });
+    if(el.parentElement.classList.contains('steps') || el.parentElement.classList.contains('ba'))
+      el.style.transitionDelay = sibs.indexOf(el) * 120 + 'ms';
+    if(io) io.observe(el); else el.classList.add('in');
+  });
+
+  /* Телефон: уведомления по очереди */
+  var icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>';
+  var warn = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>';
+  var sets = [
+    [
+      ['ok','Доброе утро! Вчера вы заработали 41 200 ₽ чистыми — на 8% больше, чем позавчера.'],
+      ['alert','Товар A-102 закончится через 6 дней. Пора делать поставку.'],
+      ['alert','Реклама съела 11% выручки — выше вашего лимита 8%.']
+    ],
+    [
+      ['ok','Доброе утро! Вчера сеть заработала 486 000 ₽, средний чек 410 ₽.'],
+      ['alert','Точка №5 списала продуктов в 2 раза больше остальных.'],
+      ['alert','Точка №4 до сих пор не прислала фото открытия смены.']
+    ],
+    [
+      ['ok','За неделю ваши посты посмотрели 84 300 раз — на 12% больше.'],
+      ['ok','Лучший пост недели — Reels про нейросети для резюме.'],
+      ['ok','Идея на сегодня: продолжите тему, публикуйте в 19:00–21:00.']
+    ]
+  ];
+  var notifs = document.getElementById('notifs');
+  var chips = [].slice.call(document.querySelectorAll('.chip'));
+  var cur = 0, phoneTimers = [], autoplay = true;
+  function esc(s){ return s.replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function clearPhone(){ phoneTimers.forEach(clearTimeout); phoneTimers = []; }
+  function showSet(i){
+    clearPhone();
+    cur = i;
+    chips.forEach(function(c, k){ c.setAttribute('aria-pressed', k === i ? 'true' : 'false'); });
+    notifs.innerHTML = sets[i].map(function(n, k){
+      return '<div class="notif ' + (n[0] === 'alert' ? 'alert' : '') + '"><span class="ic">' + (n[0] === 'alert' ? warn : icon) + '</span><div style="flex:1;min-width:0"><div class="top"><b>' + esc(botName) + '</b><span>' + (k === 0 ? 'сейчас' : (k * 1) + ' мин') + '</span></div><p>' + n[1] + '</p></div></div>';
+    }).join('');
+    var els = [].slice.call(notifs.children);
+    if(reduce){ els.forEach(function(e){ e.classList.add('show'); }); return; }
+    els.forEach(function(e, k){ phoneTimers.push(setTimeout(function(){ e.classList.add('show'); }, 500 + k * 1100)); });
+    if(autoplay) phoneTimers.push(setTimeout(function(){ showSet((cur + 1) % sets.length); }, 500 + sets[i].length * 1100 + 3800));
+  }
+  chips.forEach(function(c){
+    c.addEventListener('click', function(){ autoplay = false; showSet(+c.getAttribute('data-seg')); });
+  });
+  showSet(0);
+
+  /* Имя бота: обновляется на телефоне и в сводках */
+  document.getElementById('botname').addEventListener('input', function(e){
+    botName = e.target.value.trim() || DEFAULT_NAME;
+    document.querySelectorAll('.bot-name, .notif .top b').forEach(function(b){ b.textContent = botName; });
+  });
+
+  /* Печать текста в пузыре сообщения */
+  var timers = new WeakMap();
+  function typeBubble(el){
+    var full = el.getAttribute('data-text');
+    clearTimeout(timers.get(el));
+    if(reduce){ el.textContent = full; return; }
+    el.innerHTML = '<span class="typing" aria-label="агент печатает"><i></i><i></i><i></i></span>';
+    var i = 0;
+    function step(){
+      i += 2;
+      el.textContent = full.slice(0, i);
+      if(i < full.length) timers.set(el, setTimeout(step, 18));
+    }
+    timers.set(el, setTimeout(step, 650));
+  }
+
+  /* Вкладки с бегущим индикатором */
+  var tabs = [].slice.call(document.querySelectorAll('.tab'));
+  var ind = document.querySelector('.tab-ind');
+  var tablist = document.querySelector('.tabs');
+  function moveInd(t){
+    var lr = tablist.getBoundingClientRect(), r = t.getBoundingClientRect();
+    ind.style.width = r.width + 'px';
+    ind.style.height = r.height + 'px';
+    ind.style.transform = 'translate(' + (r.left - lr.left - 5) + 'px,' + (r.top - lr.top - 5) + 'px)';
+  }
+  function select(t, focus){
+    tabs.forEach(function(x){
+      var on = x === t;
+      x.setAttribute('aria-selected', on ? 'true' : 'false');
+      x.tabIndex = on ? 0 : -1;
+      var p = document.getElementById(x.getAttribute('aria-controls'));
+      p.hidden = !on;
+      if(on) typeBubble(p.querySelector('.bubble'));
+    });
+    moveInd(t);
+    if(focus) t.focus();
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener('click', function(){ select(t); });
+    t.addEventListener('keydown', function(e){
+      var n = null;
+      if(e.key === 'ArrowRight') n = tabs[(i + 1) % tabs.length];
+      if(e.key === 'ArrowLeft') n = tabs[(i - 1 + tabs.length) % tabs.length];
+      if(e.key === 'Home') n = tabs[0];
+      if(e.key === 'End') n = tabs[tabs.length - 1];
+      if(n){ e.preventDefault(); select(n, true); }
+    });
+  });
+  window.addEventListener('resize', function(){ moveInd(document.querySelector('.tab[aria-selected="true"]')); });
+  document.querySelectorAll('.replay').forEach(function(b){
+    b.addEventListener('click', function(){ typeBubble(b.closest('.panel').querySelector('.bubble')); });
+  });
+
+  var first = document.querySelector('#panel-sellers .bubble');
+  moveInd(tabs[0]);
+  if(io){
+    var bo = new IntersectionObserver(function(es){
+      if(es[0].isIntersecting){ typeBubble(first); bo.disconnect(); }
+    }, {threshold:.4});
+    bo.observe(first);
+  } else typeBubble(first);
+
+  /* Форма: подписи подстраиваются под тип бизнеса */
+  var hints = {
+    'Селлер на маркетплейсах': ['Где ведёте учёт', 'WB, Ozon, Яндекс Маркет', 'Сколько кабинетов', 'Например, 2 кабинета'],
+    'Сеть шаурмы / фастфуда': ['Где ведёте учёт', 'iiko, 1С, Excel…', 'Сколько точек', 'Например, 7 точек'],
+    'Блогер': ['Какие соцсети', 'Instagram, Telegram, VK…', 'Аудитория', 'Например, 25 000 подписчиков'],
+    'Другое': ['Где ведёте учёт', 'CRM, касса, Excel…', 'Масштаб бизнеса', 'Точки, сотрудники, оборот']
+  };
+  var seg = document.getElementById('seg');
+  seg.addEventListener('change', function(){
+    var h = hints[seg.value];
+    document.getElementById('sys-label').textContent = h[0];
+    document.getElementById('sys').placeholder = h[1];
+    document.getElementById('cnt-label').textContent = h[2];
+    document.getElementById('cnt').placeholder = h[3];
+  });
+
+  /* Заявка: открывает Telegram с готовым текстом */
+  document.getElementById('lead').addEventListener('submit', function(e){
+    e.preventDefault();
+    var f = e.target, h = hints[f.seg.value];
+    var text = 'Здравствуйте! Интересует пилот ИИ-агента со сводкой.\n' +
+      'Тип бизнеса: ' + f.seg.value + '\n' +
+      h[0] + ': ' + (f.sys.value || 'не указано') + '\n' +
+      h[2] + ': ' + (f.cnt.value || 'не указано') +
+      (botName !== DEFAULT_NAME ? '\nИмя бота: ' + botName : '');
+    window.open('https://t.me/' + TG_USERNAME + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>
