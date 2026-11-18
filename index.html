@@ -145,7 +145,6 @@
   .bubble .typing i:nth-child(2){animation-delay:.15s}.bubble .typing i:nth-child(3){animation-delay:.3s}
   @keyframes dot{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
   .note{font-size:14px;color:var(--dim);margin:10px 0 0}
-  .replay{background:none;border:0;color:var(--accent2);font:inherit;font-size:14px;cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
 
   .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:s;list-style:none;padding:0;margin:0}
   .steps li{counter-increment:s;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;transition:transform .4s var(--ease),border-color .3s,box-shadow .4s var(--ease)}
@@ -178,9 +177,35 @@
     .ba{grid-template-columns:1fr}
     .ba-arrow{transform:rotate(90deg)}
     nav.links{display:none}
-    .hero{padding:48px 0 40px}
+    .hero{padding:48px 0 40px;text-align:center;gap:36px}
+    .lead,.sub{margin-left:auto;margin-right:auto}
+    .cta-row{justify-content:center}
+    .namer{margin-left:auto;margin-right:auto;width:100%}
+    section h2,section .sub{text-align:center}
     .tabs{display:flex}
     .tab{flex:1 1 auto;justify-content:center}
+    .ba-card h3,.steps li{text-align:center}
+    .ba-card ul{text-align:left}
+    .form-wrap > div{text-align:center}
+    .perks{width:fit-content;max-width:100%;margin:0 auto;text-align:left}
+    footer .wrap{justify-content:center;text-align:center}
+  }
+  @media (max-width:520px){
+    body{font-size:16px}
+    .wrap{padding:0 16px}
+    section{padding:52px 0}
+    .bar{height:58px}
+    .logo{font-size:15px;white-space:nowrap}
+    .logo-mark{width:26px;height:26px}
+    .bar .btn{min-height:40px;padding:0 14px;font-size:14px}
+    h1{font-size:32px}
+    .cta-row .btn{flex:1 1 100%}
+    .phone{width:272px;height:520px}
+    .clock .t{font-size:54px}
+    .tabs{width:100%}
+    .tab{font-size:14.5px;padding:0 12px}
+    .bubble{font-size:15px}
+    form{padding:18px}
   }
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation:none!important;transition:none!important}
@@ -295,7 +320,7 @@
 Выкуп за 30 дней: 58%
 К выплате: 312 400 ₽"></div>
             </div>
-            <p class="note">Пример формата, цифры условные. <button class="replay" type="button">Показать ещё раз</button></p>
+            <p class="note">Пример формата, цифры условные.</p>
           </div>
         </div>
       </div>
@@ -318,7 +343,7 @@
 Скидки: на точке №2 скидка в 14% чеков
 Смена: точка №4 не прислала фото открытия"></div>
             </div>
-            <p class="note">Пример формата, цифры условные. <button class="replay" type="button">Показать ещё раз</button></p>
+            <p class="note">Пример формата, цифры условные.</p>
           </div>
         </div>
       </div>
@@ -342,7 +367,7 @@
 Лучшее время публикации: 19:00–21:00
 Идея: продолжить тему резюме в формате «до/после»"></div>
             </div>
-            <p class="note">Пример формата, цифры условные. <button class="replay" type="button">Показать ещё раз</button></p>
+            <p class="note">Пример формата, цифры условные.</p>
           </div>
         </div>
       </div>
@@ -492,10 +517,13 @@
   });
 
   /* Печать текста в пузыре сообщения */
-  var timers = new WeakMap();
+  /* Сводка печатается, держится на экране и через несколько секунд печатается заново */
+  var HOLD_MS = 4500;
+  var timers = new Map();
+  function stopBubble(el){ clearTimeout(timers.get(el)); timers.delete(el); }
   function typeBubble(el){
     var full = el.getAttribute('data-text');
-    clearTimeout(timers.get(el));
+    stopBubble(el);
     if(reduce){ el.textContent = full; return; }
     el.innerHTML = '<span class="typing" aria-label="агент печатает"><i></i><i></i><i></i></span>';
     var i = 0;
@@ -503,6 +531,9 @@
       i += 2;
       el.textContent = full.slice(0, i);
       if(i < full.length) timers.set(el, setTimeout(step, 18));
+      else timers.set(el, setTimeout(function(){
+        if(!el.closest('.panel').hidden) typeBubble(el);
+      }, HOLD_MS));
     }
     timers.set(el, setTimeout(step, 650));
   }
@@ -524,7 +555,7 @@
       x.tabIndex = on ? 0 : -1;
       var p = document.getElementById(x.getAttribute('aria-controls'));
       p.hidden = !on;
-      if(on) typeBubble(p.querySelector('.bubble'));
+      if(on) typeBubble(p.querySelector('.bubble')); else stopBubble(p.querySelector('.bubble'));
     });
     moveInd(t);
     if(focus) t.focus();
@@ -541,9 +572,6 @@
     });
   });
   window.addEventListener('resize', function(){ moveInd(document.querySelector('.tab[aria-selected="true"]')); });
-  document.querySelectorAll('.replay').forEach(function(b){
-    b.addEventListener('click', function(){ typeBubble(b.closest('.panel').querySelector('.bubble')); });
-  });
 
   var first = document.querySelector('#panel-sellers .bubble');
   moveInd(tabs[0]);
