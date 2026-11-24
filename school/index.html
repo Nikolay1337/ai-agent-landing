@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Онлайн-обучение: как работать с ИИ-агентами — от первого запроса до своего агента</title>
+<meta name="description" content="Практический онлайн-курс: регистрация и первые запросы, презентации и документы, парсинг и отчёты, скиллы, MCP и подключение сервисов, теория агентов и финальный проект. Запись в первый поток.">
+<meta property="og:title" content="Научитесь поручать работу ИИ-агентам">
+<meta property="og:description" content="От первого запроса до своего агента. Онлайн, на практических задачах. Запись в первый поток.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#25292a">
+<!-- Сюда вставьте счётчик Яндекс Метрики -->
+<style>
+  :root{
+    --bg:#25292a; --bg2:#2b3031; --card:#323839; --card2:#3a4142;
+    --line:#434b4c; --line2:#525b5c;
+    --text:#eef1f0; --muted:#bcc5c2; --dim:#98a39f;
+    --accent:#6cc79a; --accent2:#9adbb8; --accent-ink:#0f2219;
+    --glow:rgba(108,199,154,.32);
+    --radius:16px;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.55;font-size:17px;overflow-x:hidden}
+  a{color:var(--accent2)}
+  ::selection{background:var(--accent);color:var(--accent-ink)}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px;position:relative}
+
+  .bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+  .orb{position:absolute;width:560px;height:560px;border-radius:50%;filter:blur(110px);opacity:.16;background:var(--accent);animation:float 20s var(--ease) infinite alternate}
+  .orb.o1{top:-200px;right:-160px}
+  .orb.o2{top:50%;left:-240px;background:#8fa8a0;opacity:.14;animation-duration:26s}
+  @keyframes float{to{transform:translate(-110px,70px) scale(1.12)}}
+
+  header{position:sticky;top:0;z-index:20;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:rgba(37,41,42,.8);border-bottom:1px solid var(--line)}
+  .bar{display:flex;align-items:center;justify-content:space-between;height:66px;gap:16px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none;color:var(--text)}
+  .logo-mark{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink)}
+  .logo-mark svg{width:18px;height:18px}
+  nav.links{display:flex;gap:6px}
+  nav.links a{color:var(--muted);text-decoration:none;font-size:15px;padding:8px 12px;border-radius:8px;position:relative;transition:color .25s}
+  nav.links a::after{content:"";position:absolute;left:12px;right:12px;bottom:4px;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+  nav.links a:hover{color:var(--text)}
+  nav.links a:hover::after{transform:scaleX(1)}
+
+  .btn{--b:var(--accent);position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 26px;border-radius:12px;border:1px solid var(--b);background:var(--b);color:var(--accent-ink);font:inherit;font-weight:650;text-decoration:none;cursor:pointer;
+    transition:transform .35s var(--ease),box-shadow .35s var(--ease),background .3s,color .3s,border-color .3s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -10px var(--glow),0 0 0 4px rgba(108,199,154,.14)}
+  .btn:active{transform:translateY(0) scale(.98)}
+  .btn .arr{display:inline-block;transition:transform .35s var(--ease)}
+  .btn:hover .arr{transform:translateX(4px)}
+  .btn::before{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);transition:left .7s var(--ease)}
+  .btn:hover::before{left:130%}
+  .bar .btn .short{display:none}
+  .btn.ghost{background:transparent;color:var(--text);border-color:var(--line2)}
+  .btn.ghost:hover{border-color:var(--accent);color:var(--accent2);box-shadow:0 0 0 4px rgba(108,199,154,.1)}
+  .btn.ghost::before{background:linear-gradient(100deg,transparent,rgba(108,199,154,.2),transparent)}
+  .ripple{position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,.45);animation:rip .6s var(--ease) forwards;pointer-events:none}
+  .btn.ghost .ripple{background:rgba(108,199,154,.35)}
+  @keyframes rip{to{transform:scale(4);opacity:0}}
+  .btn:focus-visible,.chip:focus-visible,.mod-head:focus-visible,input:focus-visible,select:focus-visible,nav.links a:focus-visible,.logo:focus-visible{outline:2px solid var(--accent2);outline-offset:3px}
+
+  .hero{padding:72px 0 56px;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--accent2);border:1px solid var(--line2);background:rgba(108,199,154,.08);padding:6px 14px;border-radius:999px;margin-bottom:22px}
+  .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 var(--glow);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(108,199,154,.55)}70%{box-shadow:0 0 0 10px rgba(108,199,154,0)}100%{box-shadow:0 0 0 0 rgba(108,199,154,0)}}
+  h1{font-size:clamp(34px,5vw,56px);line-height:1.07;letter-spacing:-.03em;margin:0 0 20px}
+  h1 .hl{color:var(--accent)}
+  .lead{font-size:clamp(18px,2vw,20px);color:var(--muted);max-width:580px;margin:0 0 30px}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+  .facts{display:flex;gap:22px;flex-wrap:wrap;margin-top:28px;color:var(--muted);font-size:15px}
+  .facts b{display:block;color:var(--text);font-size:22px;letter-spacing:-.01em}
+
+  /* Демо: задача агенту */
+  .demo{background:var(--card);border:1px solid var(--line2);border-radius:20px;padding:18px;box-shadow:0 40px 80px -40px rgba(0,0,0,.6)}
+  .demo-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  .demo-title{font-size:14px;color:var(--dim)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{min-height:36px;padding:0 13px;border-radius:999px;border:1px solid var(--line2);background:var(--card2);color:var(--muted);font:inherit;font-size:14px;cursor:pointer;transition:background .3s,color .3s,border-color .3s}
+  .chip:hover{color:var(--text);border-color:var(--accent)}
+  .chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .msg-you{margin-left:auto;max-width:88%;background:rgba(108,199,154,.16);border:1px solid rgba(108,199,154,.35);border-radius:16px 4px 16px 16px;padding:12px 14px;font-size:15px;line-height:1.5}
+  .agent{margin-top:14px;display:grid;gap:8px;min-height:212px}
+  .stepline{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--muted);opacity:0;transform:translateY(6px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+  .stepline.show{opacity:1;transform:none}
+  .stepline .st{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--line2);display:grid;place-items:center;margin-top:1px;transition:background .3s,border-color .3s}
+  .stepline .st svg{width:12px;height:12px;opacity:0;color:var(--accent-ink);transition:opacity .3s}
+  .stepline.done .st{background:var(--accent);border-color:var(--accent)}
+  .stepline.done .st svg{opacity:1}
+  .stepline.run .st{border-color:var(--accent);border-top-color:transparent;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .result{margin-top:6px;display:flex;gap:12px;align-items:center;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;opacity:0;transform:scale(.97);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+  .result.show{opacity:1;transform:none}
+  .result .file{flex:none;width:42px;height:42px;border-radius:10px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center}
+  .result .file svg{width:22px;height:22px}
+  .result b{display:block;font-size:15px}
+  .result span{font-size:13.5px;color:var(--dim)}
+  .demo-note{font-size:13px;color:var(--dim);margin:12px 2px 0}
+
+  section{padding:72px 0}
+  section.alt{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  h2{font-size:clamp(28px,3.6vw,40px);letter-spacing:-.025em;line-height:1.12;margin:0 0 12px}
+  .sub{color:var(--muted);max-width:660px;margin:0 0 32px}
+
+  .who{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .who .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;position:relative;overflow:hidden;transition:transform .4s var(--ease),border-color .3s,box-shadow .4s var(--ease)}
+  .who .card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(108,199,154,.14),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
+  .who .card:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 18px 40px -22px var(--glow)}
+  .who .card:hover::before{opacity:1}
+  .who .ic{width:42px;height:42px;border-radius:12px;background:rgba(108,199,154,.14);color:var(--accent);display:grid;place-items:center;margin-bottom:14px}
+  .who .ic svg{width:22px;height:22px}
+  .who strong{display:block;font-size:18px;margin-bottom:6px}
+  .who span{color:var(--muted);font-size:15px}
+
+  /* Программа */
+  .prog-wrap{display:grid;grid-template-columns:.8fr 1.2fr;gap:40px;align-items:start}
+  .track{position:sticky;top:96px}
+  .track-bar{height:8px;border-radius:99px;background:var(--card2);overflow:hidden;margin:16px 0 10px}
+  .track-fill{height:100%;width:14%;background:var(--accent);border-radius:99px;transition:width .6s var(--ease)}
+  .track-txt{font-size:14px;color:var(--dim)}
+  .phases{display:grid;gap:8px;margin-top:22px}
+  .phase{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--muted)}
+  .phase i{width:10px;height:10px;border-radius:3px;flex:none}
+  .ph-p i{background:var(--accent)}
+  .ph-t i{background:#8fa8a0}
+  .ph-f i{background:#e9c46a}
+  .mods{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+  .mod{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);transition:border-color .3s,box-shadow .4s var(--ease)}
+  .mod.open{border-color:var(--accent);box-shadow:0 18px 44px -28px var(--glow)}
+  .mod-head{width:100%;display:flex;gap:14px;align-items:center;text-align:left;background:none;border:0;color:inherit;font:inherit;padding:16px 18px;cursor:pointer;border-radius:var(--radius)}
+  .mod-n{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--card2);color:var(--muted);transition:background .3s,color .3s}
+  .mod.open .mod-n{background:var(--accent);color:var(--accent-ink)}
+  .mod-t{flex:1;min-width:0}
+  .mod-t b{display:block;font-size:17px}
+  .mod-t span{font-size:14px;color:var(--dim)}
+  .tag{flex:none;font-size:12.5px;padding:3px 10px;border-radius:99px;border:1px solid var(--line2);color:var(--muted)}
+  .tag.p{border-color:rgba(108,199,154,.5);color:var(--accent2)}
+  .tag.f{border-color:rgba(233,196,106,.55);color:#f0d68f}
+  .chev{flex:none;width:20px;height:20px;color:var(--dim);transition:transform .4s var(--ease)}
+  .mod.open .chev{transform:rotate(180deg);color:var(--accent)}
+  .mod-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s var(--ease)}
+  .mod.open .mod-body{grid-template-rows:1fr}
+  .mod-body > div{overflow:hidden}
+  .mod-inner{padding:0 18px 18px 68px}
+  .mod-inner ul{margin:0 0 12px;padding:0;list-style:none;display:grid;gap:7px;color:var(--muted);font-size:15.5px}
+  .mod-inner li{display:flex;gap:10px}
+  .mod-inner li::before{content:"–";color:var(--dim)}
+  .outcome{display:flex;gap:10px;align-items:flex-start;background:rgba(108,199,154,.1);border:1px solid rgba(108,199,154,.3);border-radius:10px;padding:10px 12px;font-size:15px}
+  .outcome svg{flex:none;width:18px;height:18px;color:var(--accent);margin-top:2px}
+
+  /* Формат */
+  .fmt{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;list-style:none;margin:0;padding:0}
+  .fmt li{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .fmt svg{width:24px;height:24px;color:var(--accent);margin-bottom:10px}
+  .fmt b{display:block;margin-bottom:4px}
+  .fmt span{color:var(--muted);font-size:15px}
+
+  /* Автор-практик */
+  .proof{display:grid;grid-template-columns:1.1fr .9fr;gap:32px;align-items:center;background:var(--card);border:1px solid var(--line2);border-radius:22px;padding:30px}
+  .proof h2{font-size:clamp(24px,3vw,32px)}
+  .proof p{color:var(--muted);margin:0 0 20px}
+  .mini-chat{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px;font-size:14.5px}
+  .mini-chat .q{justify-self:end;background:rgba(108,199,154,.16);border:1px solid rgba(108,199,154,.35);border-radius:14px 4px 14px 14px;padding:8px 12px}
+  .mini-chat .a{background:var(--card);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:10px 12px;white-space:pre-line;color:var(--muted)}
+
+  /* Запись */
+  .form-wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  form{display:grid;gap:16px;background:var(--card);border:1px solid var(--line2);border-radius:20px;padding:24px}
+  label{font-weight:600;font-size:15px;display:grid;gap:7px}
+  input,select{font:inherit;min-height:48px;padding:0 14px;border:1px solid var(--line2);border-radius:10px;background:var(--bg2);color:var(--text);transition:border-color .25s,box-shadow .25s}
+  input::placeholder{color:var(--dim)}
+  input:hover,select:hover{border-color:#6a7576}
+  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(108,199,154,.18);outline:none}
+  .err{font-size:13px;color:#f2a29a;margin:-8px 0 0;min-height:0}
+  .hint{font-size:14px;color:var(--dim);margin:0}
+  .perks{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+  .perks li{display:flex;gap:12px;align-items:flex-start;color:var(--muted)}
+  .perks svg{flex:none;width:22px;height:22px;color:var(--accent);margin-top:2px}
+
+  footer{border-top:1px solid var(--line);padding:30px 0;color:var(--dim);font-size:14.5px}
+  footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media (max-width:880px){
+    .hero,.form-wrap,.prog-wrap,.proof{grid-template-columns:1fr}
+    .who{grid-template-columns:1fr}
+    .fmt{grid-template-columns:1fr 1fr}
+    nav.links{display:none}
+    .hero{padding:48px 0 40px;text-align:center;gap:36px}
+    .lead,.sub{margin-left:auto;margin-right:auto}
+    .cta-row,.facts{justify-content:center}
+    section h2,section .sub{text-align:center}
+    .track{position:static;text-align:center}
+    .phases{width:fit-content;margin:22px auto 0}
+    .who .card{text-align:center}
+    .who .ic{margin-left:auto;margin-right:auto}
+    .form-wrap > div{text-align:center}
+    .perks{width:fit-content;max-width:100%;margin:0 auto;text-align:left}
+    .proof{text-align:center;padding:24px}
+    .proof h2{text-align:center}
+    footer .wrap{justify-content:center;text-align:center}
+  }
+  @media (max-width:520px){
+    body{font-size:16px}
+    .wrap{padding:0 16px}
+    section{padding:52px 0}
+    .bar{height:58px}
+    .logo{font-size:15px;white-space:nowrap}
+    .logo-mark{width:26px;height:26px}
+    .bar .btn{min-height:40px;padding:0 12px;font-size:13.5px;white-space:nowrap;flex:none}
+    .bar .btn .long{display:none}
+    .bar .btn .short{display:inline}
+    h1{font-size:32px}
+    .cta-row .btn{flex:1 1 100%}
+    .fmt{grid-template-columns:1fr}
+    .mod-inner{padding:0 16px 16px 16px}
+    .tag{display:none}
+    form{padding:18px}
+    .demo{padding:14px;text-align:left}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    .reveal{opacity:1;transform:none}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="orb o1"></div><div class="orb o2"></div></div>
+
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="../" title="На главную"><span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg></span>Школа ИИ-агентов</a>
+    <nav class="links" aria-label="Разделы">
+      <a href="#program">Программа</a>
+      <a href="#format">Формат</a>
+      <a href="#signup">Запись</a>
+      <a href="../business/">Для бизнеса</a>
+    </nav>
+    <a class="btn ghost" href="#signup"><span class="long">Записаться</span><span class="short">Запись</span></a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <div class="reveal">
+      <span class="eyebrow"><span class="dot" aria-hidden="true"></span>Онлайн · набираем первый поток</span>
+      <h1>Научитесь поручать работу <span class="hl">ИИ-агентам</span></h1>
+      <p class="lead">От регистрации и первых запросов до своих агентов, скиллов и подключения сервисов через MCP. На практических задачах и без программирования.</p>
+      <div class="cta-row">
+        <a class="btn" href="#signup">Записаться в первый поток <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn ghost" href="#program">Смотреть программу</a>
+      </div>
+      <div class="facts">
+        <div><b>7 модулей</b>от старта до проекта</div>
+        <div><b>Онлайн</b>в своём темпе</div>
+        <div><b>Практика</b>на ваших задачах</div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="demo" aria-label="Пример: как агент выполняет задачу">
+        <div class="demo-top">
+          <span class="demo-title">Что вы будете поручать агенту</span>
+          <div class="chips" role="group" aria-label="Пример задачи">
+            <button class="chip" type="button" data-task="0" aria-pressed="true">Презентация</button>
+            <button class="chip" type="button" data-task="1" aria-pressed="false">Парсинг</button>
+            <button class="chip" type="button" data-task="2" aria-pressed="false">Скилл</button>
+          </div>
+        </div>
+        <div class="msg-you" id="demo-q"></div>
+        <div class="agent" id="demo-steps" aria-live="polite"></div>
+        <p class="demo-note">Так выглядит работа агента изнутри. После курса вы сделаете это сами.</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="alt">
+    <div class="wrap">
+      <h2 class="reveal">Кому подойдёт</h2>
+      <p class="sub reveal">Опыт с нейросетями не нужен. Достаточно уметь пользоваться браузером и иметь задачи, которые хочется отдать машине.</p>
+      <div class="who">
+        <div class="card reveal">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-6h6v6"/></svg></div>
+          <strong>Предпринимателю</strong>
+          <span>Отчёты, презентации для партнёров, сбор данных о конкурентах — без лишнего сотрудника.</span>
+        </div>
+        <div class="card reveal">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
+          <strong>Специалисту в найме</strong>
+          <span>Аналитику, маркетологу, менеджеру: рутина за минуты, а у вас — время на то, за что ценят.</span>
+        </div>
+        <div class="card reveal">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M5.6 5.6l2.1 2.1"/><path d="M3 12h3"/><circle cx="12" cy="13" r="5"/><path d="M12 11v2l1.5 1.5"/></svg></div>
+          <strong>Тем, кто только начинает</strong>
+          <span>Начинаем с регистрации и первого запроса. Теория — когда уже есть первые результаты.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="program">
+    <div class="wrap prog-wrap">
+      <div class="track reveal">
+        <h2>Программа</h2>
+        <p class="sub">Сначала результат, потом теория: так проще дойти до конца. Нажмите на модуль, чтобы раскрыть.</p>
+        <div class="track-bar" aria-hidden="true"><div class="track-fill" id="track-fill"></div></div>
+        <div class="track-txt" id="track-txt">Модуль 1 из 7</div>
+        <div class="phases">
+          <div class="phase ph-p"><i aria-hidden="true"></i>Модули 1–5: практика</div>
+          <div class="phase ph-t"><i aria-hidden="true"></i>Модуль 6: как это устроено</div>
+          <div class="phase ph-f"><i aria-hidden="true"></i>Модуль 7: свой проект</div>
+        </div>
+      </div>
+
+      <ol class="mods" id="mods">
+        <li class="mod open">
+          <button class="mod-head" type="button" aria-expanded="true" aria-controls="m1" id="h1b">
+            <span class="mod-n">1</span>
+            <span class="mod-t"><b>Старт: аккаунт и первые запросы</b><span>Выбираем сервис и пробуем</span></span>
+            <span class="tag p">практика</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="mod-body" id="m1" role="region" aria-labelledby="h1b"><div><div class="mod-inner">
+            <ul>
+              <li>Какой сервис выбрать под вашу страну и задачи</li>
+              <li>Регистрация, тарифы и что в них входит</li>
+              <li>Как формулировать задачу, чтобы получить нужный результат</li>
+            </ul>
+            <div class="outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Аккаунт настроен, первые задачи решены</div>
+          </div></div></div>
+        </li>
+        <li class="mod">
+          <button class="mod-head" type="button" aria-expanded="false" aria-controls="m2" id="h2b">
+            <span class="mod-n">2</span>
+            <span class="mod-t"><b>Документы за вечер</b><span>Презентации, документы, таблицы</span></span>
+            <span class="tag p">практика</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="mod-body" id="m2" role="region" aria-labelledby="h2b"><div><div class="mod-inner">
+            <ul>
+              <li>Презентация по вашим материалам: от черновика до готового файла</li>
+              <li>Документы и таблицы с расчётами</li>
+              <li>Как вносить правки и выгружать в нужный формат</li>
+            </ul>
+            <div class="outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Готовая презентация по вашей теме</div>
+          </div></div></div>
+        </li>
+        <li class="mod">
+          <button class="mod-head" type="button" aria-expanded="false" aria-controls="m3" id="h3b">
+            <span class="mod-n">3</span>
+            <span class="mod-t"><b>Агент работает с данными</b><span>Парсинг, отчёты, файлы</span></span>
+            <span class="tag p">практика</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="mod-body" id="m3" role="region" aria-labelledby="h3b"><div><div class="mod-inner">
+            <ul>
+              <li>Сбор информации с сайтов: цены, конкуренты, отзывы</li>
+              <li>Обработка таблиц и сводные отчёты</li>
+              <li>Как проверять, что агент ничего не выдумал</li>
+            </ul>
+            <div class="outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Свой отчёт, собранный из открытых данных</div>
+          </div></div></div>
+        </li>
+        <li class="mod">
+          <button class="mod-head" type="button" aria-expanded="false" aria-controls="m4" id="h4b">
+            <span class="mod-n">4</span>
+            <span class="mod-t"><b>Скиллы: настроил один раз</b><span>Повторяемые процессы одной командой</span></span>
+            <span class="tag p">практика</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="mod-body" id="m4" role="region" aria-labelledby="h4b"><div><div class="mod-inner">
+            <ul>
+              <li>Что такое скилл и чем он лучше длинного запроса</li>
+              <li>Упаковываем вашу инструкцию так, чтобы агент делал задачу одинаково хорошо</li>
+              <li>Библиотека скиллов под ваши повторяющиеся задачи</li>
+            </ul>
+            <div class="outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>2–3 скилла под ваши задачи</div>
+          </div></div></div>
+        </li>
+        <li class="mod">
+          <button class="mod-head" type="button" aria-expanded="false" aria-controls="m5" id="h5b">
+            <span class="mod-n">5</span>
+            <span class="mod-t"><b>Подключаем сервисы: MCP</b><span>Почта, диск, календарь, Telegram</span></span>
+            <span class="tag p">практика</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="mod-body" id="m5" role="region" aria-labelledby="h5b"><div><div class="mod-inner">
+            <ul>
+              <li>Что такое MCP и коннекторы простыми словами</li>
+              <li>Агент читает почту и документы, ставит встречи, пишет в мессенджер</li>
+              <li>Как давать доступы безопасно и забирать их одной кнопкой</li>
+            </ul>
+            <div class="outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Агент работает с вашими сервисами</div>
+          </div></div></div>
+        </li>
+        <li class="mod">
+          <button class="mod-head" type="button" aria-expanded="false" aria-controls="m6" id="h6b">
+            <span class="mod-n">6</span>
+            <span class="mod-t"><b>Как это устроено</b><span>Модель, агент, инструменты, токены</span></span>
+            <span class="tag">теория</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="mod-body" id="m6" role="region" aria-labelledby="h6b"><div><div class="mod-inner">
+            <ul>
+              <li>Чем модель отличается от агента и что такое инструменты</li>
+              <li>Контекст и токены: почему агент «забывает» и сколько это стоит</li>
+              <li>Почему ИИ ошибается и как строить работу так, чтобы ошибки ловились</li>
+            </ul>
+            <div class="outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Понимаете, что происходит «под капотом»</div>
+          </div></div></div>
+        </li>
+        <li class="mod">
+          <button class="mod-head" type="button" aria-expanded="false" aria-controls="m7" id="h7b">
+            <span class="mod-n">7</span>
+            <span class="mod-t"><b>Финальный проект</b><span>Свой агент под реальную задачу</span></span>
+            <span class="tag f">проект</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="mod-body" id="m7" role="region" aria-labelledby="h7b"><div><div class="mod-inner">
+            <ul>
+              <li>Выбираем задачу из вашей работы или бизнеса</li>
+              <li>Собираем агента или Telegram-бота, который её решает</li>
+              <li>Разбор реального проекта: бот с отчётами для бизнеса</li>
+            </ul>
+            <div class="outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Работающий проект, который можно показать</div>
+          </div></div></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="format" class="alt">
+    <div class="wrap">
+      <h2 class="reveal">Формат</h2>
+      <p class="sub reveal">Всё онлайн. Учитесь, когда удобно, а с вопросами не остаётесь одни.</p>
+      <ul class="fmt">
+        <li class="reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3V9z"/></svg><b>Уроки онлайн</b><span>Короткие, по одному навыку за раз.</span></li>
+        <li class="reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg><b>Задания</b><span>После каждого модуля — практика на вашей задаче.</span></li>
+        <li class="reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><b>Чат потока</b><span>В Telegram: вопросы, примеры, обмен опытом.</span></li>
+        <li class="reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><b>Обратная связь</b><span>Автор разбирает ваши проекты.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="proof reveal">
+        <div>
+          <h2>Учит практик, а не теоретик</h2>
+          <p>Автор курса внедряет ИИ-агентов в бизнес: делает Telegram-ботов, которые по запросу присылают владельцу отчёт о продажах на маркетплейсах или выручке кафе. В финальном модуле разбираем такой проект изнутри.</p>
+          <a class="btn ghost" href="../business/">Посмотреть продукт для бизнеса <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+        <div class="mini-chat" aria-label="Пример диалога с ботом для бизнеса">
+          <div class="q">Что с продажами за неделю?</div>
+          <div class="a">Выручка: 412 000 ₽ (−8% к прошлой)
+Просел товар A-102: закончился на складе
+Совет: сделать поставку до пятницы</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="signup" class="alt">
+    <div class="wrap form-wrap">
+      <div class="reveal">
+        <h2>Запись в первый поток</h2>
+        <p class="sub">Оставьте пару слов о себе — продолжим в Telegram.</p>
+        <ul class="perks">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Первый поток — по сниженной цене, условия пришлю в Telegram</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Программу подстрою под задачи участников</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Запись ни к чему не обязывает</li>
+        </ul>
+      </div>
+      <form id="signup-form" class="reveal" novalidate>
+        <label for="exp">Ваш опыт с ИИ
+          <select id="exp" name="exp">
+            <option value="Ещё не пробовал">Ещё не пробовал</option>
+            <option value="Пользуюсь чатом с нейросетью">Пользуюсь чатом с нейросетью</option>
+            <option value="Уже пробовал агентов">Уже пробовал агентов</option>
+          </select>
+        </label>
+        <label for="role">Чем занимаетесь
+          <input id="role" name="role" type="text" placeholder="Например, свой магазин, маркетолог, аналитик" autocomplete="off">
+        </label>
+        <label for="goal">Что хотите поручить агенту
+          <input id="goal" name="goal" type="text" placeholder="Например, отчёты, презентации, сбор данных" autocomplete="off" aria-describedby="goal-err">
+        </label>
+        <p class="err" id="goal-err" role="alert"></p>
+        <button class="btn" type="submit">Записаться через Telegram <span class="arr" aria-hidden="true">→</span></button>
+        <p class="hint">Откроется Telegram с готовым сообщением. Сайт не хранит введённые данные.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Школа ИИ-агентов · первый поток</span>
+    <span><a href="../">Главная</a> · <a href="../business/">ИИ-агент для бизнеса</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var TG_USERNAME = "ngafitulin";
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll('.btn').forEach(function(b){
+    b.addEventListener('pointerdown', function(e){
+      if(reduce) return;
+      var r = b.getBoundingClientRect(), s = Math.max(r.width, r.height);
+      var sp = document.createElement('span');
+      sp.className = 'ripple';
+      sp.style.width = sp.style.height = s + 'px';
+      sp.style.left = (e.clientX - r.left - s/2) + 'px';
+      sp.style.top = (e.clientY - r.top - s/2) + 'px';
+      b.appendChild(sp);
+      setTimeout(function(){ sp.remove(); }, 650);
+    });
+  });
+
+  document.querySelectorAll('.who .card').forEach(function(c){
+    c.addEventListener('pointermove', function(e){
+      var r = c.getBoundingClientRect();
+      c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){
+    es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, {threshold:.12}) : null;
+  document.querySelectorAll('.reveal').forEach(function(el){
+    var p = el.parentElement;
+    if(p.classList.contains('who') || p.classList.contains('fmt')){
+      var sibs = [].slice.call(p.children);
+      el.style.transitionDelay = sibs.indexOf(el) * 110 + 'ms';
+    }
+    if(io) io.observe(el); else el.classList.add('in');
+  });
+
+  /* Демо: агент выполняет задачу по шагам */
+  var check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  var fileIc = {
+    deck: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4"/><path d="M8 20h8"/></svg>',
+    table: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M9 4v16"/></svg>',
+    skill: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>'
+  };
+  var tasks = [
+    { q: 'Сделай презентацию на 10 слайдов по файлу «Итоги квартала» для встречи с партнёрами',
+      steps: ['Читаю файл: 3 таблицы, 2 страницы текста', 'Выделяю главное: выручка, рост, планы', 'Строю графики по таблицам', 'Собираю 10 слайдов в едином стиле'],
+      res: ['deck', 'Итоги квартала.pptx', '10 слайдов · можно править'] },
+    { q: 'Собери цены 30 конкурентов на беспроводные наушники с маркетплейса и сравни с нашими',
+      steps: ['Открываю выдачу и карточки товаров', 'Собираю цену, рейтинг и число отзывов', 'Сравниваю с вашими ценами', 'Отмечаю, где вы дороже рынка'],
+      res: ['table', 'Конкуренты_наушники.xlsx', '30 позиций · 4 дороже рынка'] },
+    { q: 'Запомни, как я делаю еженедельный отчёт для руководителя, чтобы потом — одной командой',
+      steps: ['Разбираю ваш прошлый отчёт: структура и тон', 'Записываю шаги: откуда данные, что считать', 'Упаковываю инструкцию в скилл', 'Проверяю на данных этой недели'],
+      res: ['skill', 'Скилл «Недельный отчёт»', 'Запуск одной командой'] }
+  ];
+  var qEl = document.getElementById('demo-q'), sEl = document.getElementById('demo-steps');
+  var chips = [].slice.call(document.querySelectorAll('.chip'));
+  var timers = [], auto = true, cur = 0;
+  function clearT(){ timers.forEach(clearTimeout); timers = []; }
+  function later(fn, ms){ timers.push(setTimeout(fn, ms)); }
+  function run(i){
+    clearT(); cur = i;
+    chips.forEach(function(c, k){ c.setAttribute('aria-pressed', k === i ? 'true' : 'false'); });
+    var t = tasks[i];
+    qEl.textContent = t.q;
+    sEl.innerHTML = '';
+    var lines = t.steps.map(function(s){
+      var d = document.createElement('div');
+      d.className = 'stepline';
+      d.innerHTML = '<span class="st">' + check + '</span><span></span>';
+      d.lastChild.textContent = s;
+      sEl.appendChild(d);
+      return d;
+    });
+    var r = document.createElement('div');
+    r.className = 'result';
+    r.innerHTML = '<span class="file">' + fileIc[t.res[0]] + '</span><span><b></b><span></span></span>';
+    r.querySelector('b').textContent = t.res[1];
+    r.querySelector('span span').textContent = t.res[2];
+    sEl.appendChild(r);
+    if(reduce){ lines.forEach(function(l){ l.classList.add('show','done'); }); r.classList.add('show'); return; }
+    var T = 500;
+    lines.forEach(function(l){
+      later(function(){ l.classList.add('show','run'); }, T);
+      T += 900;
+      later(function(){ l.classList.remove('run'); l.classList.add('done'); }, T);
+      T += 150;
+    });
+    later(function(){ r.classList.add('show'); }, T + 100);
+    if(auto) later(function(){ run((cur + 1) % tasks.length); }, T + 4200);
+  }
+  chips.forEach(function(c){ c.addEventListener('click', function(){ auto = false; run(+c.getAttribute('data-task')); }); });
+  run(0);
+
+  /* Программа: аккордеон + прогресс */
+  var mods = [].slice.call(document.querySelectorAll('.mod'));
+  var fill = document.getElementById('track-fill'), txt = document.getElementById('track-txt');
+  function setTrack(n){ fill.style.width = Math.round(n / mods.length * 100) + '%'; txt.textContent = 'Модуль ' + n + ' из ' + mods.length; }
+  mods.forEach(function(m, i){
+    var h = m.querySelector('.mod-head');
+    h.addEventListener('click', function(){
+      var open = !m.classList.contains('open');
+      mods.forEach(function(x){ x.classList.remove('open'); x.querySelector('.mod-head').setAttribute('aria-expanded', 'false'); });
+      if(open){ m.classList.add('open'); h.setAttribute('aria-expanded', 'true'); setTrack(i + 1); }
+    });
+  });
+  setTrack(1);
+
+  /* Запись: проверка и переход в Telegram */
+  var form = document.getElementById('signup-form');
+  var goal = document.getElementById('goal'), err = document.getElementById('goal-err');
+  goal.addEventListener('input', function(){ err.textContent = ''; goal.removeAttribute('aria-invalid'); });
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!goal.value.trim()){
+      err.textContent = 'Напишите хотя бы одну задачу — так я пойму, что вам показать в курсе.';
+      goal.setAttribute('aria-invalid', 'true');
+      goal.focus();
+      return;
+    }
+    var text = 'Здравствуйте! Хочу в первый поток обучения работе с ИИ-агентами.\n' +
+      'Опыт с ИИ: ' + form.exp.value + '\n' +
+      'Чем занимаюсь: ' + (form.role.value.trim() || 'не указано') + '\n' +
+      'Что хочу поручить агенту: ' + goal.value.trim();
+    window.open('https://t.me/' + TG_USERNAME + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>
