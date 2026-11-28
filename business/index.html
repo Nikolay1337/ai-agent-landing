@@ -8,15 +8,15 @@
 <meta property="og:title" content="Отчёт о вашем бизнесе в Telegram — в любой момент">
 <meta property="og:description" content="Спросите бота — и через несколько секунд получите прибыль, проблемы и что сделать сегодня.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#25292a">
+<meta name="theme-color" content="#0b1014">
 <!-- Сюда вставьте счётчик Яндекс Метрики, чтобы мерить спрос: клики по кнопкам и отправки формы -->
 <style>
   :root{
-    --bg:#25292a; --bg2:#2b3031; --card:#323839; --card2:#3a4142;
-    --line:#434b4c; --line2:#525b5c;
-    --text:#eef1f0; --muted:#bcc5c2; --dim:#98a39f;
-    --accent:#6cc79a; --accent2:#9adbb8; --accent-ink:#0f2219;
-    --glow:rgba(108,199,154,.32);
+    --bg:#0b1014; --bg2:rgba(15,22,28,.72); --card:rgba(20,29,36,.84); --card2:#1b2730;
+    --line:#24333c; --line2:#33454f;
+    --text:#eaf2f4; --muted:#a9bcc3; --dim:#7f959d;
+    --accent:#5ee0a8; --accent2:#9af0c9; --accent-ink:#04140d;
+    --glow:rgba(94,224,168,.38);
     --radius:16px;
     --ease:cubic-bezier(.22,1,.36,1);
   }
@@ -29,13 +29,13 @@
 
   /* Мягкий фон */
   .bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-  .orb{position:absolute;width:560px;height:560px;border-radius:50%;filter:blur(110px);opacity:.16;background:var(--accent);animation:float 20s var(--ease) infinite alternate}
+  .orb{position:absolute;width:560px;height:560px;border-radius:50%;filter:blur(110px);opacity:.13;background:var(--accent);animation:float 20s var(--ease) infinite alternate}
   .orb.o1{top:-200px;left:-160px}
-  .orb.o2{top:45%;right:-240px;background:#8fa8a0;opacity:.14;animation-duration:26s}
+  .orb.o2{top:45%;right:-240px;background:#53c8f0;opacity:.12;animation-duration:26s}
   @keyframes float{to{transform:translate(110px,70px) scale(1.12)}}
 
   /* Шапка */
-  header{position:sticky;top:0;z-index:20;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:rgba(37,41,42,.8);border-bottom:1px solid var(--line)}
+  header{position:sticky;top:0;z-index:20;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:rgba(11,16,20,.72);border-bottom:1px solid var(--line)}
   .bar{display:flex;align-items:center;justify-content:space-between;height:66px;gap:16px}
   .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none;color:var(--text)}
   .logo-mark{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink)}
@@ -49,7 +49,7 @@
   /* Кнопки */
   .btn{--b:var(--accent);position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 26px;border-radius:12px;border:1px solid var(--b);background:var(--b);color:var(--accent-ink);font:inherit;font-weight:650;text-decoration:none;cursor:pointer;
     transition:transform .35s var(--ease),box-shadow .35s var(--ease),background .3s,color .3s,border-color .3s}
-  .btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -10px var(--glow),0 0 0 4px rgba(108,199,154,.14)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -10px var(--glow),0 0 0 4px rgba(94,224,168,.14)}
   .btn:active{transform:translateY(0) scale(.98)}
   .btn .arr{display:inline-block;transition:transform .35s var(--ease)}
   .btn:hover .arr{transform:translateX(4px)}
@@ -57,16 +57,16 @@
   .btn:hover::before{left:130%}
   .bar .btn .short{display:none}
   .btn.ghost{background:transparent;color:var(--text);border-color:var(--line2)}
-  .btn.ghost:hover{border-color:var(--accent);color:var(--accent2);box-shadow:0 0 0 4px rgba(108,199,154,.1)}
-  .btn.ghost::before{background:linear-gradient(100deg,transparent,rgba(108,199,154,.2),transparent)}
+  .btn.ghost:hover{border-color:var(--accent);color:var(--accent2);box-shadow:0 0 0 4px rgba(94,224,168,.1)}
+  .btn.ghost::before{background:linear-gradient(100deg,transparent,rgba(94,224,168,.2),transparent)}
   .ripple{position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,.45);animation:rip .6s var(--ease) forwards;pointer-events:none}
-  .btn.ghost .ripple{background:rgba(108,199,154,.35)}
+  .btn.ghost .ripple{background:rgba(94,224,168,.35)}
   @keyframes rip{to{transform:scale(4);opacity:0}}
   .btn:focus-visible,.tab:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,nav.links a:focus-visible,.logo:focus-visible{outline:2px solid var(--accent2);outline-offset:3px}
 
   /* Первый экран */
   .hero{padding:72px 0 56px;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
-  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--accent2);border:1px solid var(--line2);background:rgba(108,199,154,.08);padding:6px 14px;border-radius:999px;margin-bottom:22px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--accent2);border:1px solid var(--line2);background:rgba(94,224,168,.08);padding:6px 14px;border-radius:999px;margin-bottom:22px}
   h1{font-size:clamp(34px,5vw,56px);line-height:1.07;letter-spacing:-.03em;margin:0 0 20px}
   h1 .hl{color:var(--accent)}
   .lead{font-size:clamp(18px,2vw,20px);color:var(--muted);max-width:580px;margin:0 0 30px}
@@ -129,7 +129,7 @@
   .split{display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:start}
   .cards{list-style:none;margin:0;padding:0;display:grid;gap:12px}
   .card{position:relative;padding:16px 18px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:transform .35s var(--ease),border-color .3s}
-  .card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(108,199,154,.14),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
+  .card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(94,224,168,.14),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
   .card:hover{transform:translateX(4px);border-color:var(--line2)}
   .card:hover::before{opacity:1}
   .card strong{display:block;position:relative}
@@ -159,8 +159,8 @@
   label{font-weight:600;font-size:15px;display:grid;gap:7px}
   input,select{font:inherit;min-height:48px;padding:0 14px;border:1px solid var(--line2);border-radius:10px;background:var(--bg2);color:var(--text);transition:border-color .25s,box-shadow .25s}
   input::placeholder{color:var(--dim)}
-  input:hover,select:hover{border-color:#6a7576}
-  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(108,199,154,.18);outline:none}
+  input:hover,select:hover{border-color:#4a6470}
+  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(94,224,168,.18);outline:none}
   .hint{font-size:14px;color:var(--dim);margin:0}
   .perks{list-style:none;padding:0;margin:0;display:grid;gap:14px}
   .perks li{display:flex;gap:12px;align-items:flex-start;color:var(--muted)}
@@ -219,6 +219,7 @@
     html{scroll-behavior:auto}
   }
 </style>
+<link rel="stylesheet" href="../assets/fx.css">
 </head>
 <body>
 <div class="bg" aria-hidden="true"><div class="orb o1"></div><div class="orb o2"></div></div>
@@ -232,7 +233,7 @@
       <a href="#request">Пилот</a>
       <a href="../school/">Обучение</a>
     </nav>
-    <a class="btn ghost" href="#request"><span class="long">Оставить заявку</span><span class="short">Заявка</span></a>
+    <a class="btn ghost cta-glow" href="#request"><span class="long">Оставить заявку</span><span class="short">Заявка</span></a>
   </div>
 </header>
 
@@ -618,5 +619,6 @@
   });
 })();
 </script>
+<script src="../assets/fx.js" data-page="business"></script>
 </body>
 </html>

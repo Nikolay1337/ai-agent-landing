@@ -1,0 +1,126 @@
+/* Живой фон, «завод агентов», робот-помощник и светящаяся плашка. Общий файл для всех страниц. */
+
+#fx{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden}
+#fx canvas{position:absolute;inset:0;width:100%;height:100%}
+#fx .scenes{position:absolute;inset:0;opacity:.44}
+#fx .scene{position:absolute;inset:0;opacity:0;transform:scale(1.04);transition:opacity 1.3s ease,transform 1.6s cubic-bezier(.22,1,.36,1)}
+#fx .scene.on{opacity:1;transform:none}
+#fx .scene svg{width:100%;height:100%;display:block}
+#fx .scene *{animation-play-state:paused}
+#fx .scene.on *{animation-play-state:running}
+#fx .vign{position:absolute;inset:0;background:radial-gradient(ellipse 75% 70% at 50% 45%,rgba(7,11,14,0) 0%,rgba(7,11,14,.55) 70%,rgba(7,11,14,.85) 100%)}
+@media (max-width:700px){#fx .scenes{opacity:.32}}
+
+/* общие элементы сцен */
+#fx .draw{stroke-dasharray:1;stroke-dashoffset:1;animation:fxDraw 7s ease-in-out infinite}
+@keyframes fxDraw{0%{stroke-dashoffset:1}45%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:-1}}
+#fx .spin{transform-box:fill-box;transform-origin:center;animation:fxSpin 9s linear infinite}
+#fx .spin.rev{animation-direction:reverse;animation-duration:6s}
+#fx .spin.slow{animation-duration:40s}
+@keyframes fxSpin{to{transform:rotate(360deg)}}
+#fx .belt{animation:fxBelt .8s linear infinite}
+@keyframes fxBelt{to{stroke-dashoffset:-50}}
+#fx .part{animation:fxPart 16s linear infinite}
+@keyframes fxPart{from{transform:translateX(-200px)}to{transform:translateX(1800px)}}
+#fx .arm1{transform-origin:0 -20px;animation:fxArm1 3.4s ease-in-out infinite alternate}
+#fx .arm2{transform-origin:0 0;animation:fxArm2 2.6s ease-in-out infinite alternate}
+#fx .arm-b .arm1{animation-delay:-1.7s}
+#fx .arm-b .arm2{animation-delay:-1.3s}
+@keyframes fxArm1{from{transform:rotate(-24deg)}to{transform:rotate(18deg)}}
+@keyframes fxArm2{from{transform:rotate(34deg)}to{transform:rotate(-22deg)}}
+#fx .spark{animation:fxSpark 1.1s steps(2) infinite}
+@keyframes fxSpark{50%{opacity:0}}
+#fx .pulse{stroke-dasharray:46 1800;animation:fxPulse 3.6s linear infinite}
+@keyframes fxPulse{from{stroke-dashoffset:1846}to{stroke-dashoffset:0}}
+#fx .cursor{animation:fxSpark 1s steps(2) infinite}
+#fx .codeln{transform-box:fill-box;transform-origin:left;animation:fxCode 5s ease-out infinite}
+@keyframes fxCode{0%{transform:scaleX(0)}30%,90%{transform:scaleX(1)}100%{transform:scaleX(1);opacity:0}}
+#fx .scan{animation:fxScan 3s ease-in-out infinite alternate}
+@keyframes fxScan{from{transform:translateY(0)}to{transform:translateY(560px)}}
+#fx .chk{stroke-dasharray:1;stroke-dashoffset:1;animation:fxChk 6s ease infinite}
+@keyframes fxChk{0%{stroke-dashoffset:1}15%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:1}}
+#fx .prog{transform-box:fill-box;transform-origin:left;animation:fxProg 6s ease-in-out infinite}
+@keyframes fxProg{0%{transform:scaleX(.05)}80%,100%{transform:scaleX(1)}}
+#fx .pop{transform-box:fill-box;transform-origin:left bottom;animation:fxPop 6s ease infinite}
+@keyframes fxPop{0%,10%{opacity:0;transform:scale(.6)}20%,75%{opacity:1;transform:none}90%,100%{opacity:0;transform:none}}
+#fx .ring{transform-box:fill-box;transform-origin:center;animation:fxRing 4s ease-out infinite}
+@keyframes fxRing{from{transform:scale(.7);opacity:.9}to{transform:scale(1.25);opacity:0}}
+
+/* Прогресс «завода» слева */
+#fx-steps{position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:15;display:none;flex-direction:column;gap:14px;pointer-events:none}
+#fx-steps .st{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#7d939b;letter-spacing:.02em}
+#fx-steps .st i{width:10px;height:10px;border-radius:50%;border:1.5px solid #3b4e59;background:#0b1014;transition:all .5s cubic-bezier(.22,1,.36,1)}
+#fx-steps .st span{opacity:0;transform:translateX(-6px);transition:all .5s cubic-bezier(.22,1,.36,1);white-space:nowrap}
+#fx-steps .st.done i{background:#2c6a55;border-color:#5ee0a8}
+#fx-steps .st.on i{width:12px;height:12px;background:#5ee0a8;border-color:#5ee0a8;box-shadow:0 0 0 5px rgba(94,224,168,.15),0 0 18px rgba(94,224,168,.7)}
+#fx-steps .ttl{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#5c727b;writing-mode:vertical-rl;transform:rotate(180deg);margin:0 0 6px -1px}
+@media (min-width:1240px){#fx-steps{display:flex}}
+@media (min-width:1420px){#fx-steps .st.on span{opacity:1;transform:none;color:#9af0c9}}
+
+/* ===== Робот ===== */
+.rb{display:block;width:100%;height:auto;overflow:visible;animation:rbBob 3.2s ease-in-out infinite alternate}
+@keyframes rbBob{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.rb-halo{transform-box:fill-box;transform-origin:center;animation:rbHalo 3.2s ease-in-out infinite alternate}
+@keyframes rbHalo{from{opacity:.55;transform:scale(.92)}to{opacity:1;transform:scale(1.05)}}
+.rb-flame{transform-box:fill-box;transform-origin:50% 0;animation:rbFlame .16s ease-in-out infinite alternate}
+@keyframes rbFlame{from{transform:scaleY(.75) scaleX(.9)}to{transform:scaleY(1.15)}}
+.rb-ant{animation:rbAnt 2.4s ease-in-out infinite}
+@keyframes rbAnt{0%,100%{fill:#5ee0a8}50%{fill:#53c8f0;filter:drop-shadow(0 0 4px #53c8f0)}}
+.rb-core{transform-box:fill-box;transform-origin:center;animation:rbCore 1.6s ease-in-out infinite}
+@keyframes rbCore{0%,100%{transform:scale(.8);opacity:.75}50%{transform:scale(1.15);opacity:1}}
+.rb-arm{transform-box:fill-box;transform-origin:50% 10%;transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.rb-arm-l{animation:rbSwingL 3s ease-in-out infinite alternate}
+.rb-arm-r{animation:rbSwingR 3s ease-in-out infinite alternate}
+@keyframes rbSwingL{from{transform:rotate(8deg)}to{transform:rotate(-3deg)}}
+@keyframes rbSwingR{from{transform:rotate(-8deg)}to{transform:rotate(3deg)}}
+.wave .rb-arm-r{animation:rbWave .38s ease-in-out 5 alternate}
+@keyframes rbWave{from{transform:rotate(-165deg)}to{transform:rotate(-120deg)}}
+.rb-eyes{transition:transform .25s ease-out}
+.rb-lids{transform-box:fill-box;transform-origin:center;transition:transform .09s ease}
+.blink .rb-lids{transform:scaleY(.12)}
+.happy .rb-lids{transform:scaleY(.5) translateY(4px)}
+.hop .rb{animation:rbHop .7s cubic-bezier(.3,1.6,.5,1)}
+@keyframes rbHop{0%{transform:translateY(0)}40%{transform:translateY(-26px) rotate(-8deg)}70%{transform:translateY(0) rotate(4deg)}100%{transform:none}}
+
+/* Робот-спутник */
+#bot{position:fixed;left:0;top:0;z-index:30;width:104px;transform:translate(-200px,60vh);transition:transform 1.5s cubic-bezier(.45,0,.2,1),opacity .5s ease;will-change:transform;pointer-events:none}
+#bot .rb-tilt{position:relative;transition:transform .6s ease}
+#bot.fly-r .rb-tilt{transform:rotate(14deg)}
+#bot.fly-l .rb-tilt{transform:rotate(-14deg)}
+#bot.fly-r .rb-flame,#bot.fly-l .rb-flame{animation-duration:.08s}
+#bot .rb-btn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color:transparent;border-radius:50%}
+#bot .rb-btn:focus-visible{outline:2px solid #9af0c9;outline-offset:4px}
+#bot.docked{opacity:0;pointer-events:none}
+#bot.docked .rb-btn{pointer-events:none}
+#bot.dim{opacity:.35}
+.rb-bubble{position:absolute;bottom:calc(100% + 4px);right:10px;width:max-content;max-width:220px;padding:10px 14px;border-radius:16px 16px 4px 16px;background:rgba(14,22,28,.94);border:1px solid rgba(94,224,168,.45);color:#eaf2f4;font-size:14.5px;line-height:1.4;box-shadow:0 14px 34px -14px rgba(83,200,240,.55);opacity:0;transform:translateY(8px) scale(.92);transform-origin:right bottom;transition:opacity .35s ease,transform .45s cubic-bezier(.3,1.5,.5,1);pointer-events:none}
+#bot.left .rb-bubble{right:auto;left:10px;border-radius:16px 16px 16px 4px;transform-origin:left bottom}
+.rb-bubble.show{opacity:1;transform:none}
+@media (max-width:700px){
+  #bot{width:64px}
+  .rb-bubble{font-size:13.5px;max-width:210px;padding:9px 12px}
+}
+
+/* Большой робот на главной */
+.hero-bot{position:relative;width:150px;margin:0 auto 10px;cursor:pointer}
+.hero-bot .rb-bubble{bottom:auto;top:26px;right:auto;left:calc(100% + 6px);border-radius:16px 16px 16px 4px;transform-origin:left center;max-width:230px;text-align:left}
+.hero-bot .orbit{position:absolute;left:50%;top:50%;width:210px;height:210px;margin:-112px 0 0 -105px;border-radius:50%;border:1px dashed rgba(83,200,240,.35);animation:fxSpin 24s linear infinite;pointer-events:none}
+.hero-bot .orbit::before{content:"";position:absolute;top:-4px;left:50%;width:8px;height:8px;border-radius:50%;background:#53c8f0;box-shadow:0 0 12px #53c8f0}
+@media (max-width:640px){.hero-bot{display:none}}
+
+/* ===== Светящаяся плашка в шапке ===== */
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+.cta-glow{position:relative;isolation:isolate;border-color:transparent!important;background:rgba(94,224,168,.08)!important;border-radius:999px!important;box-shadow:inset 0 0 0 1px rgba(94,224,168,.18)}
+.cta-glow::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.6px;background:conic-gradient(from var(--ang),rgba(94,224,168,.12),#5ee0a8 16%,#53c8f0 30%,rgba(83,200,240,.12) 46%,rgba(94,224,168,.12));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:ctaAng 3.2s linear infinite;pointer-events:none;z-index:-1}
+@keyframes ctaAng{to{--ang:360deg}}
+.cta-glow:hover{box-shadow:0 0 0 4px rgba(94,224,168,.12),0 10px 30px -10px rgba(83,200,240,.55)!important;color:#eaf2f4!important}
+.cta-glow svg{animation:ctaPlane 2.6s ease-in-out infinite}
+@keyframes ctaPlane{0%,100%{transform:none}50%{transform:translate(2px,-2px)}}
+.cta-glow .live{width:8px;height:8px;border-radius:50%;background:#5ee0a8;flex:none;animation:ctaLive 1.8s infinite}
+@keyframes ctaLive{0%{box-shadow:0 0 0 0 rgba(94,224,168,.6)}70%{box-shadow:0 0 0 8px rgba(94,224,168,0)}100%{box-shadow:0 0 0 0 rgba(94,224,168,0)}}
+@media (max-width:640px){.cta-glow .live{display:none}}
+
+@media (prefers-reduced-motion:reduce){
+  #fx *,.rb,.rb *,.cta-glow::after,.cta-glow svg,.hero-bot .orbit{animation:none!important}
+  #bot{transition:opacity .3s}
+}

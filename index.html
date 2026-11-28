@@ -8,15 +8,15 @@
 <meta property="og:title" content="ИИ-агенты, которые работают на вас">
 <meta property="og:description" content="Внедрение ИИ-агента в ваш бизнес или онлайн-обучение работе с агентами.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#25292a">
+<meta name="theme-color" content="#0b1014">
 <!-- Сюда вставьте счётчик Яндекс Метрики -->
 <style>
   :root{
-    --bg:#25292a; --bg2:#2b3031; --card:#323839; --card2:#3a4142;
-    --line:#434b4c; --line2:#525b5c;
-    --text:#eef1f0; --muted:#bcc5c2; --dim:#98a39f;
-    --accent:#6cc79a; --accent2:#9adbb8; --accent-ink:#0f2219;
-    --glow:rgba(108,199,154,.32);
+    --bg:#0b1014; --bg2:rgba(15,22,28,.72); --card:rgba(20,29,36,.84); --card2:#1b2730;
+    --line:#24333c; --line2:#33454f;
+    --text:#eaf2f4; --muted:#a9bcc3; --dim:#7f959d;
+    --accent:#5ee0a8; --accent2:#9af0c9; --accent-ink:#04140d;
+    --glow:rgba(94,224,168,.38);
     --ease:cubic-bezier(.22,1,.36,1);
   }
   *{box-sizing:border-box}
@@ -29,23 +29,23 @@
   .bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
   .orb{position:absolute;width:600px;height:600px;border-radius:50%;filter:blur(120px);opacity:.15;background:var(--accent);animation:float 22s var(--ease) infinite alternate}
   .orb.o1{top:-220px;left:-180px}
-  .orb.o2{bottom:-260px;right:-220px;background:#8fa8a0;opacity:.14;animation-duration:28s}
+  .orb.o2{bottom:-260px;right:-220px;background:#53c8f0;opacity:.12;animation-duration:28s}
   @keyframes float{to{transform:translate(120px,80px) scale(1.12)}}
 
-  header{border-bottom:1px solid var(--line)}
+  header{border-bottom:1px solid var(--line);background:rgba(11,16,20,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);position:sticky;top:0;z-index:20}
   .bar{display:flex;align-items:center;justify-content:space-between;height:66px;gap:16px}
   .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none;color:var(--text)}
   .logo-mark{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink)}
   .logo-mark svg{width:18px;height:18px}
-  .tg{color:var(--muted);text-decoration:none;font-size:15px;padding:8px 12px;border-radius:8px;transition:color .25s}
+  .tg{color:var(--text);text-decoration:none;font-size:15px;font-weight:600;padding:10px 18px;border-radius:999px;transition:color .25s,box-shadow .3s}
   .tg:hover{color:var(--text)}
   .tg{display:inline-flex;align-items:center;gap:8px}
   .tg svg{width:18px;height:18px}
   .l-short,.t-short,.m-ic,.m-desc,.chain .num{display:none}
 
   main{flex:1}
-  .hero{text-align:center;padding:64px 20px 36px}
-  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--accent2);border:1px solid var(--line2);background:rgba(108,199,154,.08);padding:6px 14px;border-radius:999px;margin-bottom:22px}
+  .hero{text-align:center;padding:40px 20px 36px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--accent2);border:1px solid var(--line2);background:rgba(94,224,168,.08);padding:6px 14px;border-radius:999px;margin-bottom:22px}
   h1{font-size:clamp(34px,5.4vw,60px);line-height:1.06;letter-spacing:-.03em;margin:0 auto 18px;max-width:860px}
   h1 .hl{color:var(--accent)}
   .lead{font-size:clamp(18px,2vw,21px);color:var(--muted);max-width:640px;margin:0 auto}
@@ -54,7 +54,7 @@
   .paths{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:24px 20px 56px}
   .path{position:relative;display:flex;flex-direction:column;gap:18px;padding:28px;border-radius:24px;background:var(--card);border:1px solid var(--line2);text-decoration:none;color:inherit;overflow:hidden;
     transition:transform .5s var(--ease),border-color .3s,box-shadow .5s var(--ease)}
-  .path::before{content:"";position:absolute;inset:0;background:radial-gradient(380px circle at var(--mx,50%) var(--my,0%),rgba(108,199,154,.16),transparent 60%);opacity:0;transition:opacity .35s;pointer-events:none}
+  .path::before{content:"";position:absolute;inset:0;background:radial-gradient(380px circle at var(--mx,50%) var(--my,0%),rgba(94,224,168,.16),transparent 60%);opacity:0;transition:opacity .35s;pointer-events:none}
   .path:hover{transform:translateY(-8px);border-color:var(--accent);box-shadow:0 30px 60px -30px var(--glow)}
   .path:hover::before{opacity:1}
   .path:focus-visible{outline:2px solid var(--accent2);outline-offset:4px}
@@ -66,7 +66,7 @@
   .path li{display:flex;gap:10px;color:var(--muted);font-size:15.5px}
   .path li svg{flex:none;width:18px;height:18px;color:var(--accent);margin-top:3px}
   .go{margin-top:auto;display:inline-flex;align-items:center;gap:10px;align-self:flex-start;min-height:50px;padding:0 24px;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-weight:650;position:relative;transition:box-shadow .35s var(--ease)}
-  .path:hover .go{box-shadow:0 12px 30px -10px var(--glow),0 0 0 4px rgba(108,199,154,.14)}
+  .path:hover .go{box-shadow:0 12px 30px -10px var(--glow),0 0 0 4px rgba(94,224,168,.14)}
   .go .arr{transition:transform .35s var(--ease)}
   .path:hover .go .arr{transform:translateX(5px)}
   .path.school .go{background:transparent;color:var(--text);border:1px solid var(--line2)}
@@ -74,7 +74,7 @@
 
   /* Мини-визуалы */
   .viz{position:relative;height:150px;border-radius:16px;background:var(--bg2);border:1px solid var(--line);overflow:hidden;padding:14px}
-  .bubble-q{position:absolute;right:14px;top:14px;background:rgba(108,199,154,.16);border:1px solid rgba(108,199,154,.35);border-radius:14px 4px 14px 14px;padding:7px 11px;font-size:13.5px}
+  .bubble-q{position:absolute;right:14px;top:14px;background:rgba(94,224,168,.16);border:1px solid rgba(94,224,168,.35);border-radius:14px 4px 14px 14px;padding:7px 11px;font-size:13.5px}
   .bubble-a{position:absolute;left:14px;top:58px;right:40px;background:var(--card);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:9px 12px;font-size:13.5px;color:var(--muted);line-height:1.45;opacity:0;transform:translateY(8px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
   .bubble-a b{color:var(--text)}
   .viz.play .bubble-a{opacity:1;transform:none}
@@ -130,9 +130,9 @@
     .path:hover{transform:none}
     .path:active{transform:scale(.97)}
     .path-top,.path > p,.path ul,.viz{display:none}
-    .m-ic{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:rgba(108,199,154,.16);color:var(--accent);margin-bottom:4px}
+    .m-ic{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:rgba(94,224,168,.16);color:var(--accent);margin-bottom:4px}
     .m-ic svg{width:24px;height:24px}
-    .path.school .m-ic{background:rgba(143,168,160,.18);color:#c3d6cf}
+    .path.school .m-ic{background:rgba(83,200,240,.16);color:#9fe3f7}
     .t-long{display:none}
     .t-short{display:inline}
     .path h2{font-size:20px}
@@ -159,6 +159,7 @@
     .reveal{opacity:1;transform:none}
   }
 </style>
+<link rel="stylesheet" href="assets/fx.css">
 </head>
 <body>
 <div class="bg" aria-hidden="true"><div class="orb o1"></div><div class="orb o2"></div></div>
@@ -166,12 +167,13 @@
 <header>
   <div class="wrap bar">
     <a class="logo" href="./"><span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4z"/></svg></span><span class="l-long">ИИ-агенты на практике</span><span class="l-short">ИИ-агенты</span></a>
-    <a class="tg" href="https://t.me/ngafitulin" target="_blank" rel="noopener" aria-label="Написать в Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 3-9.5 18-2.5-8-8-2.5z"/><path d="M22 3 10 13"/></svg><span class="tg-txt">Написать в Telegram</span></a>
+    <a class="tg cta-glow" href="https://t.me/ngafitulin" target="_blank" rel="noopener" aria-label="Написать в Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 3-9.5 18-2.5-8-8-2.5z"/><path d="M22 3 10 13"/></svg><span class="live" aria-hidden="true"></span><span class="tg-txt">Написать в Telegram</span></a>
   </div>
 </header>
 
 <main>
   <div class="wrap hero reveal">
+    <div class="hero-bot"></div>
     <span class="eyebrow">Внедрение и обучение</span>
     <h1>ИИ-агенты, которые <span class="hl">работают на вас</span></h1>
     <p class="lead">Подключаю ИИ-агентов к бизнесу и учу работать с ними самостоятельно. Выберите, что вам ближе.</p>
@@ -284,5 +286,6 @@
   setInterval(cycle, 7000);
 })();
 </script>
+<script src="assets/fx.js" data-page="hub"></script>
 </body>
 </html>
