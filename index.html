@@ -39,16 +39,19 @@
   .logo-mark svg{width:18px;height:18px}
   .tg{color:var(--muted);text-decoration:none;font-size:15px;padding:8px 12px;border-radius:8px;transition:color .25s}
   .tg:hover{color:var(--text)}
+  .tg{display:inline-flex;align-items:center;gap:8px}
+  .tg svg{width:18px;height:18px}
+  .l-short,.t-short,.m-ic,.m-desc,.chain .num{display:none}
 
   main{flex:1}
-  .hero{text-align:center;padding:64px 0 36px}
+  .hero{text-align:center;padding:64px 20px 36px}
   .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--accent2);border:1px solid var(--line2);background:rgba(108,199,154,.08);padding:6px 14px;border-radius:999px;margin-bottom:22px}
   h1{font-size:clamp(34px,5.4vw,60px);line-height:1.06;letter-spacing:-.03em;margin:0 auto 18px;max-width:860px}
   h1 .hl{color:var(--accent)}
   .lead{font-size:clamp(18px,2vw,21px);color:var(--muted);max-width:640px;margin:0 auto}
 
   /* Развилка */
-  .paths{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:24px 0 56px}
+  .paths{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:24px 20px 56px}
   .path{position:relative;display:flex;flex-direction:column;gap:18px;padding:28px;border-radius:24px;background:var(--card);border:1px solid var(--line2);text-decoration:none;color:inherit;overflow:hidden;
     transition:transform .5s var(--ease),border-color .3s,box-shadow .5s var(--ease)}
   .path::before{content:"";position:absolute;inset:0;background:radial-gradient(380px circle at var(--mx,50%) var(--my,0%),rgba(108,199,154,.16),transparent 60%);opacity:0;transition:opacity .35s;pointer-events:none}
@@ -83,7 +86,7 @@
   .bar-row.on .n{background:var(--accent);color:var(--accent-ink)}
 
   /* Как связано */
-  .loop{padding:8px 0 64px}
+  .loop{padding:8px 20px 64px}
   .loop h2{text-align:center;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 24px}
   .chain{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:stretch;list-style:none;margin:0;padding:0}
   .chain li.step{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
@@ -98,21 +101,58 @@
   .reveal.in{opacity:1;transform:none}
 
   @media (max-width:880px){
-    .paths{grid-template-columns:1fr}
+    .path{padding:22px}
+    .path-top .badge:last-child{display:none}
+    .bubble-a{right:14px}
     .chain{grid-template-columns:1fr}
     .chain .ar{transform:rotate(90deg)}
     .chain li.step{text-align:center}
     footer .wrap{justify-content:center;text-align:center}
   }
-  @media (max-width:520px){
+  @media (max-width:640px){
     body{font-size:16px}
     .wrap{padding:0 16px}
-    .bar{height:58px}
-    .logo{font-size:15px}
-    .hero{padding:44px 0 24px}
-    h1{font-size:32px}
-    .path{padding:20px;border-radius:20px}
-    .go{align-self:stretch;justify-content:center}
+    .bar{height:56px}
+    .logo{font-size:16px}
+    .l-long,.tg-txt{display:none}
+    .l-short{display:inline}
+    .tg{width:40px;height:40px;padding:0;justify-content:center;border:1px solid var(--line2);border-radius:12px;color:var(--accent2)}
+    .tg svg{width:19px;height:19px}
+
+    .hero{padding:28px 16px 18px}
+    .eyebrow{font-size:13px;padding:5px 12px;margin-bottom:14px}
+    h1{font-size:30px;margin-bottom:12px}
+    .lead{font-size:16px}
+
+    /* Две плитки рядом, как в приложении */
+    .paths{grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px 28px}
+    .path{padding:16px 14px;border-radius:20px;gap:8px;min-height:198px}
+    .path:hover{transform:none}
+    .path:active{transform:scale(.97)}
+    .path-top,.path > p,.path ul,.viz{display:none}
+    .m-ic{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:rgba(108,199,154,.16);color:var(--accent);margin-bottom:4px}
+    .m-ic svg{width:24px;height:24px}
+    .path.school .m-ic{background:rgba(143,168,160,.18);color:#c3d6cf}
+    .t-long{display:none}
+    .t-short{display:inline}
+    .path h2{font-size:20px}
+    .m-desc{display:block;color:var(--muted);font-size:14px;line-height:1.4}
+    .go{align-self:stretch;justify-content:center;min-height:42px;padding:0 12px;font-size:15px;border-radius:12px;margin-top:auto}
+
+    /* Как связано: компактный список */
+    .loop{padding:0 16px 32px}
+    .loop h2{font-size:22px;margin-bottom:14px}
+    .chain{gap:8px}
+    .chain .ar{display:none}
+    .chain li.step{display:grid;grid-template-columns:32px 1fr;column-gap:12px;text-align:left;padding:14px;border-radius:16px}
+    .chain .num{display:grid;place-items:center;grid-row:span 2;width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-style:normal;font-weight:700;font-size:14px}
+    .chain b{font-size:15.5px;margin-bottom:2px}
+    .chain span{font-size:14px}
+    footer{padding:20px 0;font-size:14px}
+  }
+  @media (max-width:340px){
+    .paths{grid-template-columns:1fr}
+    .path{min-height:0}
   }
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation:none!important;transition:none!important}
@@ -125,8 +165,8 @@
 
 <header>
   <div class="wrap bar">
-    <a class="logo" href="./"><span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4z"/></svg></span>ИИ-агенты на практике</a>
-    <a class="tg" href="https://t.me/ngafitulin" target="_blank" rel="noopener">Написать в Telegram</a>
+    <a class="logo" href="./"><span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4z"/></svg></span><span class="l-long">ИИ-агенты на практике</span><span class="l-short">ИИ-агенты</span></a>
+    <a class="tg" href="https://t.me/ngafitulin" target="_blank" rel="noopener" aria-label="Написать в Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 3-9.5 18-2.5-8-8-2.5z"/><path d="M22 3 10 13"/></svg><span class="tg-txt">Написать в Telegram</span></a>
   </div>
 </header>
 
@@ -139,8 +179,10 @@
 
   <div class="wrap paths">
     <a class="path reveal" href="business/">
+      <span class="m-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-6"/></svg></span>
       <div class="path-top"><span class="badge">Для бизнеса</span><span class="badge">Пилот: 14 дней бесплатно</span></div>
-      <h2>Сделаю агента под ваш бизнес</h2>
+      <h2><span class="t-long">Сделаю агента под ваш бизнес</span><span class="t-short">Для бизнеса</span></h2>
+      <span class="m-desc">Бот с отчётами в Telegram. 14 дней бесплатно</span>
       <p>Telegram-бот, который в любой момент отвечает, как идут дела: выручка, остатки, реклама, просадки.</p>
       <div class="viz" id="viz-biz" aria-hidden="true">
         <div class="bubble-q">Что с продажами за неделю?</div>
@@ -150,12 +192,14 @@
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Селлеры WB, Ozon, Яндекс Маркета, кафе и не только</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Подключение под ключ, доступ только на чтение</li>
       </ul>
-      <span class="go">Для бизнеса <span class="arr" aria-hidden="true">→</span></span>
+      <span class="go"><span class="t-long">Для бизнеса</span><span class="t-short">Открыть</span> <span class="arr" aria-hidden="true">→</span></span>
     </a>
 
     <a class="path school reveal" href="school/">
+      <span class="m-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg></span>
       <div class="path-top"><span class="badge">Обучение</span><span class="badge">Первый поток</span></div>
-      <h2>Научитесь работать с агентами сами</h2>
+      <h2><span class="t-long">Научитесь работать с агентами сами</span><span class="t-short">Обучение</span></h2>
+      <span class="m-desc">Онлайн-курс: 7 модулей, от нуля до проекта</span>
       <p>Онлайн-курс: от регистрации и первых запросов до скиллов, MCP и своего проекта.</p>
       <div class="viz" id="viz-school" aria-hidden="true">
         <div class="bars">
@@ -169,18 +213,18 @@
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Презентации, парсинг, отчёты, скиллы</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Без программирования, на ваших задачах</li>
       </ul>
-      <span class="go">Смотреть программу <span class="arr" aria-hidden="true">→</span></span>
+      <span class="go"><span class="t-long">Смотреть программу</span><span class="t-short">Открыть</span> <span class="arr" aria-hidden="true">→</span></span>
     </a>
   </div>
 
   <section class="wrap loop">
     <h2 class="reveal">Почему это одно целое</h2>
     <ol class="chain">
-      <li class="step reveal"><b>Внедряю в реальном бизнесе</b><span>Боты с отчётами для селлеров и кафе работают на живых данных.</span></li>
+      <li class="step reveal"><i class="num" aria-hidden="true">1</i><b>Внедряю в реальном бизнесе</b><span>Боты с отчётами для селлеров и кафе работают на живых данных.</span></li>
       <li class="ar reveal" aria-hidden="true">→</li>
-      <li class="step reveal"><b>Разбираю это в курсе</b><span>Вы учитесь на настоящих задачах, а не на учебных примерах.</span></li>
+      <li class="step reveal"><i class="num" aria-hidden="true">2</i><b>Разбираю это в курсе</b><span>Вы учитесь на настоящих задачах, а не на учебных примерах.</span></li>
       <li class="ar reveal" aria-hidden="true">→</li>
-      <li class="step reveal"><b>Вы внедряете у себя</b><span>Сами или с моей помощью — под ключ.</span></li>
+      <li class="step reveal"><i class="num" aria-hidden="true">3</i><b>Вы внедряете у себя</b><span>Сами или с моей помощью — под ключ.</span></li>
     </ol>
   </section>
 </main>
